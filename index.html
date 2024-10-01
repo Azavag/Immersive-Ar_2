@@ -1,56 +1,74 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <title>Immersive AR</title>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Building Interaction</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-  <!-- three.js -->
-  <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+      <!-- Маркер для всей сцены -->
+      <a-marker preset="hiro">
+        <!-- Модель здания 1 -->
+        <a-entity id="building1"
+          gltf-model="#model1"
+          scale="0.5 0.5 0.5"
+          position="-1 0 0"
+          class="clickable"
+        ></a-entity>
 
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-    model-viewer {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-  </style>
-</head>
-<body>
-    <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-                  ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
-                  alt="A 3D model of an astronaut"
-                  ar
-                  ar-modes="scene-viewer webxr quick-look" 
-                  auto-rotate
-                  camera-controls>
-    </model-viewer>
-                
+        <!-- Модель здания 2 -->
+        <a-entity id="building2"
+          gltf-model="#model2"
+          scale="0.5 0.5 0.5"
+          position="1 0 0"
+          class="clickable"
+        ></a-entity>
+
+        <!-- Модель здания 3 -->
+        <a-entity id="building3"
+          gltf-model="#model3"
+          scale="0.5 0.5 0.5"
+          position="0 0 1"
+          class="clickable"
+        ></a-entity>
+      </a-marker>
+
+      <a-entity camera></a-entity>
+
+      <!-- Модели зданий -->
+      <a-assets>
+        <a-asset-item id="model1" src="path/to/building1.glb"></a-asset-item>
+        <a-asset-item id="model2" src="path/to/building2.glb"></a-asset-item>
+        <a-asset-item id="model3" src="path/to/building3.glb"></a-asset-item>
+      </a-assets>
+    </a-scene>
+
     <script>
-      const modelViewer = document.querySelector('model-viewer');
-      console.log(modelViewer.activateAR);
-      modelViewer.addEventListener('load', () => {
-        if (navigator.xr && navigator.xr.isSessionSupported) {
-          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-            if (supported) {
-              modelViewer.activateAR();
-            } else {
-              console.log('WebXR is not supported on this device.');
-            }
-          });
-        } else {
-          console.log('WebXR is not available in this browser.');
-        }
+      // Функция для скрытия всех зданий
+      function hideAllBuildings() {
+        document.querySelectorAll('.clickable').forEach(building => {
+          building.setAttribute('visible', false);
+        });
+      }
+
+      // Функция для показа выбранного здания и увеличения его размера
+      function showBuilding(buildingId) {
+        const building = document.querySelector(buildingId);
+        building.setAttribute('visible', true);
+        building.setAttribute('scale', '1.5 1.5 1.5'); // Увеличение размера
+      }
+
+      // Обработчик клика по зданию
+      document.querySelectorAll('.clickable').forEach(building => {
+        building.addEventListener('click', function () {
+          hideAllBuildings(); // Скрываем все здания
+          showBuilding(`#${this.id}`); // Показываем выбранное здание
+        });
       });
     </script>
-</body>
+  </body>
 </html>
