@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clickable Cubes with Three.js</title>
+    <title>Clickable Cubes with Reset</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
@@ -12,6 +12,8 @@
       let cube1, cube2;
       let raycaster = new THREE.Raycaster();
       let mouse = new THREE.Vector2();
+      let isCube1Scaled = false; // Флаг для отслеживания изменения масштаба куба 1
+      let isCube2Scaled = false; // Флаг для отслеживания изменения масштаба куба 2
 
       init();
       animate();
@@ -71,16 +73,48 @@
 
           // Если кликнули на куб 1
           if (clickedCube === cube1) {
-            cube1.scale.set(2, 2, 2); // Увеличиваем куб 1
-            cube2.visible = false;    // Прячем куб 2
+            if (!isCube1Scaled) {
+              // Увеличиваем куб 1 и прячем куб 2
+              cube1.scale.set(2, 2, 2);
+              cube2.visible = false;
+              isCube1Scaled = true;
+            } else {
+              // Возвращаем куб 1 к исходному размеру и показываем куб 2
+              resetCubes();
+            }
           }
 
           // Если кликнули на куб 2
           if (clickedCube === cube2) {
-            cube2.scale.set(2, 2, 2); // Увеличиваем куб 2
-            cube1.visible = false;    // Прячем куб 1
+            if (!isCube2Scaled) {
+              // Увеличиваем куб 2 и прячем куб 1
+              cube2.scale.set(2, 2, 2);
+              cube1.visible = false;
+              isCube2Scaled = true;
+            } else {
+              // Возвращаем куб 2 к исходному размеру и показываем куб 1
+              resetCubes();
+            }
           }
+        } else {
+          // Если клик вне кубов, сбрасываем всё в исходное состояние
+          resetCubes();
         }
+      }
+
+      // Функция для возврата кубов к исходному состоянию
+      function resetCubes() {
+        // Сбрасываем размеры кубов
+        cube1.scale.set(1, 1, 1);
+        cube2.scale.set(1, 1, 1);
+
+        // Показываем оба куба
+        cube1.visible = true;
+        cube2.visible = true;
+
+        // Сбрасываем флаги масштабирования
+        isCube1Scaled = false;
+        isCube2Scaled = false;
       }
 
       function animate() {
