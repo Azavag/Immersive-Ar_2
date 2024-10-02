@@ -6,6 +6,8 @@
     <title>AR Clickable Cubes</title>
     <!-- Подключаем Three.js -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
+    <!-- Подключаем GLTFLoader -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/examples/js/loaders/GLTFLoader.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
     <!-- Подключаем ARButton как модуль -->
@@ -13,11 +15,11 @@
       import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
 
       let camera, scene, renderer;
-      let cube1, cube2;
+      let model1, model2;
       let raycaster = new THREE.Raycaster();
-      let isCube1Scaled = false;
-      let isCube2Scaled = false;
-      let scalingSpeed = 0.05;  // Скорость анимации
+      let isModel1Scaled = false;
+      let isModel2Scaled = false;
+      let scalingSpeed = 0.1;  // Скорость анимации
 
       init();
       animate();
@@ -40,18 +42,24 @@
         const arButton = ARButton.createButton(renderer);
         document.body.appendChild(arButton);
 
-        // Добавление первого куба (уменьшенный размер)
-        const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);  // Уменьшаем куб
-        const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        cube1 = new THREE.Mesh(geometry, material1);
-        cube1.position.set(-0.25, 0, -0.5);  // Перемещаем кубы дальше друг от друга
-        scene.add(cube1);
+         // Используем GLTFLoader для загрузки моделей
+         const loader = new THREE.GLTFLoader();
 
-        // Добавление второго куба (уменьшенный размер)
-        const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
-        cube2 = new THREE.Mesh(geometry, material2);
-        cube2.position.set(0.25, 0, -0.5);
-        scene.add(cube2);
+         // Загрузка первой модели
+        loader.load('models/building1.glb', function (gltf) {
+          model1 = gltf.scene;
+          model1.position.set(-0.3, 0, -1);  // Позиционируем первую модель
+          model1.scale.set(0.3, 0.3, 0.3);  // Устанавливаем начальный размер
+          scene.add(model1);
+        });
+
+        // Загрузка второй модели
+        loader.load('models/building1.glb', function (gltf) {
+          model2 = gltf.scene;
+          model2.position.set(0.3, 0, -1);  // Позиционируем вторую модель
+          model2.scale.set(0.3, 0.3, 0.3);  // Устанавливаем начальный размер
+          scene.add(model2);
+        });
 
         // Контроллер для обработки кликов в AR
         const controller = renderer.xr.getController(0);
@@ -71,46 +79,46 @@
       function onSelectStart(event) {
         // Определение пересечения луча с объектами
         raycaster.setFromCamera({ x: 0, y: 0 }, camera);
-        const intersects = raycaster.intersectObjects([cube1, cube2]);
+        const intersects = raycaster.intersectObjects([model1, model2], true);
 
         if (intersects.length > 0) {
-          const clickedCube = intersects[0].object;
+          const clickedModel = intersects[0].object;
 
-          if (clickedCube === cube1) {
-            if (!isCube1Scaled) {
-              animateScaling(cube1, 1.4);  // Увеличиваем куб 1
-              animateScalingAndOpacity(cube2, 0.3, 0.3);  // Уменьшаем и делаем куб 2 полупрозрачным
-              isCube1Scaled = true;
+          if (clickedModel.parent === model1) {
+            if (!isModel1Scaled) {
+              animateScaling(model1, 2);  // Увеличиваем модель 1
+              animateScalingAndOpacity(model2, 0.3, 0.3);  // Уменьшаем и делаем модель 2 полупрозрачной
+              isModel1Scaled = true;
             } else {
-              resetCubes();  // Возвращаем кубы к исходным размерам
+              resetModels();  // Возвращаем модели к исходным размерам
             }
           }
 
-          if (clickedCube === cube2) {
-            if (!isCube2Scaled) {
-              animateScaling(cube2, 1.4);  // Увеличиваем куб 2
-              animateScalingAndOpacity(cube1, 0.3, 0.3);  // Уменьшаем и делаем куб 1 полупрозрачным
-              isCube2Scaled = true;
+          if (clickedModel.parent === model2) {
+            if (!isModel2Scaled) {
+              animateScaling(model2, 2);  // Увеличиваем модель 2
+              animateScalingAndOpacity(model1, 0.3, 0.3);  // Уменьшаем и делаем модель 1 полупрозрачной
+              isModel2Scaled = true;
             } else {
-              resetCubes();  // Возвращаем кубы к исходным размерам
+              resetModels();  // Возвращаем модели к исходным размерам
             }
           }
         } else {
-          resetCubes();  // Возвращаем кубы к исходным размерам при клике в пустую область
+          resetModels();  // Возвращаем модели к исходным размерам при клике в пустую область
         }
       }
 
-      function resetCubes() {
-        animateScaling(cube1, 1);  // Возвращаем куб 1 к исходному размеру
-        animateScaling(cube2, 1);  // Возвращаем куб 2 к исходному размеру
-        animateScalingAndOpacity(cube1, 1, 1);  // Возвращаем куб 1 к нормальному размеру и прозрачности
-        animateScalingAndOpacity(cube2, 1, 1);  // Возвращаем куб 2 к нормальному размеру и прозрачности
-        isCube1Scaled = false;
-        isCube2Scaled = false;
+      function resetModels() {
+        animateScaling(model1, 1);  // Возвращаем модель 1 к исходному размеру
+        animateScaling(model2, 1);  // Возвращаем модель 2 к исходному размеру
+        animateScalingAndOpacity(model1, 1, 1);  // Возвращаем модель 1 к нормальному размеру и прозрачности
+        animateScalingAndOpacity(model2, 1, 1);  // Возвращаем модель 2 к нормальному размеру и прозрачности
+        isModel1Scaled = false;
+        isModel2Scaled = false;
       }
 
-      function animateScaling(cube, targetScale, onComplete = null) {
-        const startScale = cube.scale.x;
+      function animateScaling(model, targetScale, onComplete = null) {
+        const startScale = model.scale.x;
         const scaleDiff = targetScale - startScale;
         let progress = 0;
 
@@ -118,7 +126,7 @@
           progress += scalingSpeed;
           const newScale = startScale + scaleDiff * progress;
 
-          cube.scale.set(newScale, newScale, newScale);
+          model.scale.set(newScale, newScale, newScale);
 
           if (progress < 1) {
             requestAnimationFrame(animate);
@@ -130,9 +138,9 @@
         requestAnimationFrame(animate);
       }
 
-      function animateScalingAndOpacity(cube, targetScale, targetOpacity, onComplete = null) {
-        const startScale = cube.scale.x;
-        const startOpacity = cube.material.opacity;
+      function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null) {
+        const startScale = model.scale.x;
+        const startOpacity = model.children[0].material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
         const scaleDiff = targetScale - startScale;
         const opacityDiff = targetOpacity - startOpacity;
         let progress = 0;
@@ -142,8 +150,15 @@
           const newScale = startScale + scaleDiff * progress;
           const newOpacity = startOpacity + opacityDiff * progress;
 
-          cube.scale.set(newScale, newScale, newScale);
-          cube.material.opacity = newOpacity;
+          model.scale.set(newScale, newScale, newScale);
+
+          // Устанавливаем прозрачность для всех дочерних материалов
+          model.traverse((child) => {
+            if (child.isMesh && child.material) {
+              child.material.transparent = true;
+              child.material.opacity = newOpacity;
+            }
+          });
 
           if (progress < 1) {
             requestAnimationFrame(animate);
