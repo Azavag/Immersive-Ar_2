@@ -48,7 +48,7 @@
         scene.add(cube1);
 
         // Добавление второго куба (уменьшенный размер)
-        const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
         cube2 = new THREE.Mesh(geometry, material2);
         cube2.position.set(0.6, 0, -1);
         scene.add(cube2);
@@ -79,7 +79,7 @@
           if (clickedCube === cube1) {
             if (!isCube1Scaled) {
               animateScaling(cube1, 2);  // Увеличиваем куб 1
-              animateScaling(cube2, 0, () => { cube2.visible = false; });  // Убираем куб 2
+              animateScalingAndOpacity(cube2, 0.3, 0.3);  // Уменьшаем и делаем куб 2 полупрозрачным
               isCube1Scaled = true;
             } else {
               resetCubes();  // Возвращаем кубы к исходным размерам
@@ -89,7 +89,7 @@
           if (clickedCube === cube2) {
             if (!isCube2Scaled) {
               animateScaling(cube2, 2);  // Увеличиваем куб 2
-              animateScaling(cube1, 0, () => { cube1.visible = false; });  // Убираем куб 1
+              animateScalingAndOpacity(cube1, 0.3, 0.3);  // Уменьшаем и делаем куб 1 полупрозрачным
               isCube2Scaled = true;
             } else {
               resetCubes();  // Возвращаем кубы к исходным размерам
@@ -101,10 +101,10 @@
       }
 
       function resetCubes() {
-        cube1.visible = true;
-        cube2.visible = true;
         animateScaling(cube1, 1);  // Возвращаем куб 1 к исходному размеру
         animateScaling(cube2, 1);  // Возвращаем куб 2 к исходному размеру
+        animateScalingAndOpacity(cube1, 1, 1);  // Возвращаем куб 1 к нормальному размеру и прозрачности
+        animateScalingAndOpacity(cube2, 1, 1);  // Возвращаем куб 2 к нормальному размеру и прозрачности
         isCube1Scaled = false;
         isCube2Scaled = false;
       }
@@ -119,6 +119,31 @@
           const newScale = startScale + scaleDiff * progress;
 
           cube.scale.set(newScale, newScale, newScale);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else if (onComplete) {
+            onComplete();  // Выполняем коллбек после завершения анимации
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      function animateScalingAndOpacity(cube, targetScale, targetOpacity, onComplete = null) {
+        const startScale = cube.scale.x;
+        const startOpacity = cube.material.opacity;
+        const scaleDiff = targetScale - startScale;
+        const opacityDiff = targetOpacity - startOpacity;
+        let progress = 0;
+
+        function animate() {
+          progress += scalingSpeed;
+          const newScale = startScale + scaleDiff * progress;
+          const newOpacity = startOpacity + opacityDiff * progress;
+
+          cube.scale.set(newScale, newScale, newScale);
+          cube.material.opacity = newOpacity;
 
           if (progress < 1) {
             requestAnimationFrame(animate);
