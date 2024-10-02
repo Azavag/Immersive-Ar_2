@@ -20,6 +20,9 @@
       let isModel1Scaled = false;
       let isModel2Scaled = false;
       let scalingSpeed = 0.1;  // Скорость анимации
+      let standartModelScale = 0.03;
+      let smallModelScale = 0.015;
+      let bigModelScale = 0.06;
 
       init();
       animate();
@@ -59,16 +62,16 @@
          // Загрузка первой модели
         loader.load('models/building1.glb', function (gltf) {
           model1 = gltf.scene;
-          model1.position.set(-0.3, 0, -1);  // Позиционируем первую модель
-          model1.scale.set(0.03, 0.03, 0.03);  // Устанавливаем начальный размер
+          model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
+          model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
           scene.add(model1);
         });
 
         // Загрузка второй модели
         loader.load('models/building2.glb', function (gltf) {
           model2 = gltf.scene;
-          model2.position.set(0.3, 0, -1);  // Позиционируем вторую модель
-          model2.scale.set(0.03, 0.03, 0.03);  // Устанавливаем начальный размер
+          model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
+          model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
           scene.add(model2);
         });
 
@@ -97,8 +100,8 @@
 
           if (clickedModel.parent === model1) {
             if (!isModel1Scaled) {
-              animateScaling(model1, 2);  // Увеличиваем модель 1
-              animateScalingAndOpacity(model2, 0.3, 0.3);  // Уменьшаем и делаем модель 2 полупрозрачной
+              animateScaling(model1, bigModelScale);  // Увеличиваем модель 1
+              animateScalingAndOpacity(model2, smallModelScale, 0.3);  // Уменьшаем и делаем модель 2 полупрозрачной
               isModel1Scaled = true;
             } else {
               resetModels();  // Возвращаем модели к исходным размерам
@@ -107,8 +110,8 @@
 
           if (clickedModel.parent === model2) {
             if (!isModel2Scaled) {
-              animateScaling(model2, 2);  // Увеличиваем модель 2
-              animateScalingAndOpacity(model1, 0.3, 0.3);  // Уменьшаем и делаем модель 1 полупрозрачной
+              animateScaling(model2, bigModelScale);  // Увеличиваем модель 2
+              animateScalingAndOpacity(model1, smallModelScale, 0.3);  // Уменьшаем и делаем модель 1 полупрозрачной
               isModel2Scaled = true;
             } else {
               resetModels();  // Возвращаем модели к исходным размерам
@@ -120,10 +123,10 @@
       }
 
       function resetModels() {
-        animateScaling(model1, 1);  // Возвращаем модель 1 к исходному размеру
-        animateScaling(model2, 1);  // Возвращаем модель 2 к исходному размеру
-        animateScalingAndOpacity(model1, 1, 1);  // Возвращаем модель 1 к нормальному размеру и прозрачности
-        animateScalingAndOpacity(model2, 1, 1);  // Возвращаем модель 2 к нормальному размеру и прозрачности
+        animateScaling(model1, standartModelScale);  // Возвращаем модель 1 к исходному размеру
+        animateScaling(model2, standartModelScale);  // Возвращаем модель 2 к исходному размеру
+        animateScalingAndOpacity(model1, standartModelScale, 1);  // Возвращаем модель 1 к нормальному размеру и прозрачности
+        animateScalingAndOpacity(model2, standartModelScale, 1);  // Возвращаем модель 2 к нормальному размеру и прозрачности
         isModel1Scaled = false;
         isModel2Scaled = false;
       }
