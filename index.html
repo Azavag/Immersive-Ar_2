@@ -100,7 +100,7 @@
 
           if (clickedModel.parent === model1) {
             if (!isModel1Scaled) {
-              animateScaling(model1, bigModelScale);  // Увеличиваем модель 1
+              animateScaling(model1, 0.1);  // Увеличиваем модель 1
               animateScalingAndOpacity(model2, smallModelScale, 0.3);  // Уменьшаем и делаем модель 2 полупрозрачной
               isModel1Scaled = true;
             } else {
@@ -110,7 +110,7 @@
 
           if (clickedModel.parent === model2) {
             if (!isModel2Scaled) {
-              animateScaling(model2, bigModelScale);  // Увеличиваем модель 2
+              animateScaling(model2, 0.1);  // Увеличиваем модель 2
               animateScalingAndOpacity(model1, smallModelScale, 0.3);  // Уменьшаем и делаем модель 1 полупрозрачной
               isModel2Scaled = true;
             } else {
