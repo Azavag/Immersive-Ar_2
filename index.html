@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Clickable Cubes with WebXR</title>
+    <title>AR Clickable Cubes</title>
+    <!-- Подключаем Three.js -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <script>
+    <!-- Подключаем ARButton как модуль -->
+    <script type="module">
+      import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
+
       let camera, scene, renderer;
       let cube1, cube2;
       let raycaster = new THREE.Raycaster();
-      let mouse = new THREE.Vector2();
-      let controller;
-      let isCube1Scaled = false; // Флаг для отслеживания изменения масштаба куба 1
-      let isCube2Scaled = false; // Флаг для отслеживания изменения масштаба куба 2
+      let isCube1Scaled = false;
+      let isCube2Scaled = false;
 
       init();
       animate();
@@ -35,23 +36,24 @@
         document.body.appendChild(renderer.domElement);
 
         // Добавляем AR-кнопку
-        document.body.appendChild(ARButton.createButton(renderer));
+        const arButton = ARButton.createButton(renderer);
+        document.body.appendChild(arButton);
 
         // Добавление первого куба
         const geometry = new THREE.BoxGeometry();
         const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         cube1 = new THREE.Mesh(geometry, material1);
-        cube1.position.set(-0.5, 0, -1); // Размещаем куб перед пользователем
+        cube1.position.set(-0.5, 0, -1);
         scene.add(cube1);
 
         // Добавление второго куба
         const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
         cube2 = new THREE.Mesh(geometry, material2);
-        cube2.position.set(0.5, 0, -1); // Размещаем другой куб перед пользователем
+        cube2.position.set(0.5, 0, -1);
         scene.add(cube2);
 
         // Контроллер для обработки кликов в AR
-        controller = renderer.xr.getController(0);
+        const controller = renderer.xr.getController(0);
         controller.addEventListener('selectstart', onSelectStart);
         scene.add(controller);
 
@@ -66,66 +68,42 @@
       }
 
       function onSelectStart(event) {
-        const session = renderer.xr.getSession();
-        const inputSource = event.inputSource;
-        const referenceSpace = session.requestReferenceSpace('local');
-
-        const pose = inputSource.targetRaySpace;
-        const ray = new THREE.Ray();
-        ray.origin.setFromMatrixPosition(pose.matrix);
-        ray.direction.set(0, 0, -1).applyQuaternion(camera.quaternion);
-
-        // Запуск лучевой прокладки
-        raycaster.set(ray.origin, ray.direction);
-
         // Определение пересечения луча с объектами
+        raycaster.setFromCamera({ x: 0, y: 0 }, camera);
         const intersects = raycaster.intersectObjects([cube1, cube2]);
 
         if (intersects.length > 0) {
           const clickedCube = intersects[0].object;
 
-          // Если кликнули на куб 1
           if (clickedCube === cube1) {
             if (!isCube1Scaled) {
-              // Увеличиваем куб 1 и прячем куб 2
               cube1.scale.set(2, 2, 2);
               cube2.visible = false;
               isCube1Scaled = true;
             } else {
-              // Возвращаем куб 1 к исходному размеру и показываем куб 2
               resetCubes();
             }
           }
 
-          // Если кликнули на куб 2
           if (clickedCube === cube2) {
             if (!isCube2Scaled) {
-              // Увеличиваем куб 2 и прячем куб 1
               cube2.scale.set(2, 2, 2);
               cube1.visible = false;
               isCube2Scaled = true;
             } else {
-              // Возвращаем куб 2 к исходному размеру и показываем куб 1
               resetCubes();
             }
           }
         } else {
-          // Если клик вне кубов, сбрасываем всё в исходное состояние
           resetCubes();
         }
       }
 
-      // Функция для возврата кубов к исходному состоянию
       function resetCubes() {
-        // Сбрасываем размеры кубов
         cube1.scale.set(1, 1, 1);
         cube2.scale.set(1, 1, 1);
-
-        // Показываем оба куба
         cube1.visible = true;
         cube2.visible = true;
-
-        // Сбрасываем флаги масштабирования
         isCube1Scaled = false;
         isCube2Scaled = false;
       }
