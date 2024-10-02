@@ -22,9 +22,9 @@
       let isModel1Scaled = false;
       let isModel2Scaled = false;
       let scalingSpeed = 0.1;  // Скорость анимации
-      let standartModelScale = 0.03;
-      let smallModelScale = 0.015;
-      let bigModelScale = 0.06;
+      let standartModelScale = 0.5;
+      let smallModelScale = 0.25;
+      let bigModelScale = 0.75;
 
       init();
       animate();
@@ -62,16 +62,16 @@
          const loader = new THREE.GLTFLoader();
 
          // Добавление первого куба (уменьшенный размер)
-        const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);  // Уменьшаем куб
+        const geometry = new THREE.BoxGeometry(standartModelScale, standartModelScale, standartModelScale);  // Уменьшаем куб
         const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         model1 = new THREE.Mesh(geometry, material1);
-        model1.position.set(-0.6, 0, -1);  // Перемещаем кубы дальше друг от друга
+        model1.position.set(-0.5, 0, -1);  // Перемещаем кубы дальше друг от друга
         scene.add(model1);
 
         // Добавление второго куба (уменьшенный размер)
         const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
         model2 = new THREE.Mesh(geometry, material2);
-        model2.position.set(0.6, 0, -1);
+        model2.position.set(0.5, 0, -1);
         scene.add(model2);
 
          // Загрузка первой модели
