@@ -77,11 +77,6 @@
           scene.add(model2);
         });
 
-        // Контроллер для обработки кликов в AR
-        const controller = renderer.xr.getController(0);
-        controller.addEventListener('selectstart', onSelectStart);
-        scene.add(controller);
-
         // Изменение размеров окна
         window.addEventListener('resize', onWindowResize, false);
 
