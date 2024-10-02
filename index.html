@@ -44,13 +44,13 @@
         const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);  // Уменьшаем куб
         const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         cube1 = new THREE.Mesh(geometry, material1);
-        cube1.position.set(-0.6, 0, -1);  // Перемещаем кубы дальше друг от друга
+        cube1.position.set(-0.2, 0, -0.5);  // Перемещаем кубы дальше друг от друга
         scene.add(cube1);
 
         // Добавление второго куба (уменьшенный размер)
         const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
         cube2 = new THREE.Mesh(geometry, material2);
-        cube2.position.set(0.6, 0, -1);
+        cube2.position.set(0.2, 0, -0.5);
         scene.add(cube2);
 
         // Контроллер для обработки кликов в AR
