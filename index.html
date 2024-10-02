@@ -17,6 +17,8 @@
       let camera, scene, renderer;
       let model1, model2;
       let raycaster = new THREE.Raycaster();
+      let mouse = new THREE.Vector2();
+
       let isModel1Scaled = false;
       let isModel2Scaled = false;
       let scalingSpeed = 0.1;  // Скорость анимации
@@ -34,7 +36,7 @@
         // Настройка камеры
         // Устанавливаем позицию камеры сверху
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 2); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
+        camera.position.set(0, 3, 3); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
         camera.lookAt(0, 0, 0); // Направляем камеру на центр сцены
         scene.add(camera);
 
@@ -82,44 +84,59 @@
 
         // Изменение размеров окна
         window.addEventListener('resize', onWindowResize, false);
+
+        // Добавляем обработчик событий для тапа (нажатия)
+        window.addEventListener('touchstart', onTap, false); // Для мобильных устройств
       }
+
+          // Функция для обработки кликов/тапов
+        function onTap(event) {
+        if (event.type === 'touchstart') {
+          // Для касания: нормализуем координаты тапа (от -1 до 1)
+          mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+        }
+          // Устанавливаем луч от камеры в сторону координат клика/тапа
+          raycaster.setFromCamera(mouse, camera);
+
+        // Находим объекты, которые пересекает луч
+        const intersects = raycaster.intersectObjects([model1, model2], true);
+
+        // Если пересекает объект, выполняем действия
+        if (intersects.length > 0) {
+            const clickedModel = intersects[0].object;
+
+        // Логика клика по объекту — увеличиваем его, а другие модели уменьшаем и делаем полупрозрачными
+        if (!isModelScaled) {
+          clickedModel.scale.set(bigModelScale, bigModelScale, bigModelScale); // Увеличиваем выбранную модель
+          clickedModel.material.opacity = 1.0; // Ставим полную видимость для этой модели
+
+          // Для остальных объектов — уменьшаем и делаем полупрозрачными
+          [model1, model2].forEach((model) => {
+            if (model !== clickedModel) {
+              model.scale.set(0.2, 0.2, 0.2); // Уменьшаем модель
+              model.material.transparent = true; // Включаем прозрачность
+              model.material.opacity = 0.5; // Делаем модель полупрозрачной
+            }
+          });
+
+          isModelScaled = true;
+        } else {
+          // Возвращаем все модели в исходное состояние
+          resetModels();
+        }
+      } else {
+        // Если клик вне моделей, возвращаем все модели в исходное состояние
+        resetModels();
+      }
+      }
+
+
 
       function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-
-      function onSelectStart(event) {
-        // Определение пересечения луча с объектами
-        raycaster.setFromCamera({ x: 0, y: 0 }, camera);
-        const intersects = raycaster.intersectObjects([model1, model2], true);
-
-        if (intersects.length > 0) {
-          const clickedModel = intersects[0].object;
-
-          if (clickedModel.parent === model1) {
-            if (!isModel1Scaled) {
-              animateScaling(model1, 0.1);  // Увеличиваем модель 1
-              animateScalingAndOpacity(model2, smallModelScale, 0.3);  // Уменьшаем и делаем модель 2 полупрозрачной
-              isModel1Scaled = true;
-            } else {
-              resetModels();  // Возвращаем модели к исходным размерам
-            }
-          }
-
-          if (clickedModel.parent === model2) {
-            if (!isModel2Scaled) {
-              animateScaling(model2, 0.1);  // Увеличиваем модель 2
-              animateScalingAndOpacity(model1, smallModelScale, 0.3);  // Уменьшаем и делаем модель 1 полупрозрачной
-              isModel2Scaled = true;
-            } else {
-              resetModels();  // Возвращаем модели к исходным размерам
-            }
-          }
-        } else {
-          resetModels();  // Возвращаем модели к исходным размерам при клике в пустую область
-        }
       }
 
       function resetModels() {
