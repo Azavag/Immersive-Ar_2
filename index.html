@@ -17,6 +17,7 @@
       let raycaster = new THREE.Raycaster();
       let isCube1Scaled = false;
       let isCube2Scaled = false;
+      let scalingSpeed = 0.05;  // Скорость анимации
 
       init();
       animate();
@@ -39,17 +40,17 @@
         const arButton = ARButton.createButton(renderer);
         document.body.appendChild(arButton);
 
-        // Добавление первого куба
-        const geometry = new THREE.BoxGeometry();
+        // Добавление первого куба (уменьшенный размер)
+        const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);  // Уменьшаем куб
         const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         cube1 = new THREE.Mesh(geometry, material1);
-        cube1.position.set(-0.5, 0, -1);
+        cube1.position.set(-0.6, 0, -1);  // Перемещаем кубы дальше друг от друга
         scene.add(cube1);
 
-        // Добавление второго куба
+        // Добавление второго куба (уменьшенный размер)
         const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
         cube2 = new THREE.Mesh(geometry, material2);
-        cube2.position.set(0.5, 0, -1);
+        cube2.position.set(0.6, 0, -1);
         scene.add(cube2);
 
         // Контроллер для обработки кликов в AR
@@ -77,35 +78,56 @@
 
           if (clickedCube === cube1) {
             if (!isCube1Scaled) {
-              cube1.scale.set(2, 2, 2);
-              cube2.visible = false;
+              animateScaling(cube1, 2);  // Увеличиваем куб 1
+              animateScaling(cube2, 0, () => { cube2.visible = false; });  // Убираем куб 2
               isCube1Scaled = true;
             } else {
-              resetCubes();
+              resetCubes();  // Возвращаем кубы к исходным размерам
             }
           }
 
           if (clickedCube === cube2) {
             if (!isCube2Scaled) {
-              cube2.scale.set(2, 2, 2);
-              cube1.visible = false;
+              animateScaling(cube2, 2);  // Увеличиваем куб 2
+              animateScaling(cube1, 0, () => { cube1.visible = false; });  // Убираем куб 1
               isCube2Scaled = true;
             } else {
-              resetCubes();
+              resetCubes();  // Возвращаем кубы к исходным размерам
             }
           }
         } else {
-          resetCubes();
+          resetCubes();  // Возвращаем кубы к исходным размерам при клике в пустую область
         }
       }
 
       function resetCubes() {
-        cube1.scale.set(1, 1, 1);
-        cube2.scale.set(1, 1, 1);
         cube1.visible = true;
         cube2.visible = true;
+        animateScaling(cube1, 1);  // Возвращаем куб 1 к исходному размеру
+        animateScaling(cube2, 1);  // Возвращаем куб 2 к исходному размеру
         isCube1Scaled = false;
         isCube2Scaled = false;
+      }
+
+      function animateScaling(cube, targetScale, onComplete = null) {
+        const startScale = cube.scale.x;
+        const scaleDiff = targetScale - startScale;
+        let progress = 0;
+
+        function animate() {
+          progress += scalingSpeed;
+          const newScale = startScale + scaleDiff * progress;
+
+          cube.scale.set(newScale, newScale, newScale);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else if (onComplete) {
+            onComplete();  // Выполняем коллбек после завершения анимации
+          }
+        }
+
+        requestAnimationFrame(animate);
       }
 
       function animate() {
