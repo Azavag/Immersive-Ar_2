@@ -25,8 +25,10 @@
       let standartModelScale = 0.5;
       let smallModelScale = 0.25;
       let bigModelScale = 0.75;
+      const objects = [];
 
       init();
+      render();
       animate();
 
       function init() {
@@ -67,12 +69,14 @@
         model1 = new THREE.Mesh(geometry, material1);
         model1.position.set(-0.5, 0, -1);  // Перемещаем кубы дальше друг от друга
         scene.add(model1);
+        objects.push(model1);
 
         // Добавление второго куба
         const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
         model2 = new THREE.Mesh(geometry, material2);
         model2.position.set(0.5, 0, -1);
         scene.add(model2);
+        objects.push(model2);
 
          // Загрузка первой модели
         // loader.load('models/building1.glb', function (gltf) {
@@ -96,40 +100,40 @@
         // Добавляем обработчик событий для тапа (нажатия)
         document.addEventListener('pointerDown', onPointerDown, false);
       }
-	    
-	function onPointerDown( event )
-	{
-		pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
-		raycaster.setFromCamera( pointer, camera );
-		const intersects = raycaster.intersectObjects(scene.children, false);
-	
-		if ( intersects.length > 0 ) 
-		{
-			const intersect = intersects[0];
-			console.log(intersect);
-			const clickedModel = intersects[0].object;
-			console.log(clickedModel);
-			render();
-		}
-	}
+
+      function onPointerDown( event ) {
+				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+				raycaster.setFromCamera( pointer, camera );
+				const intersects = raycaster.intersectObjects(scene.children, false);
+
+				if ( intersects.length > 0 ) {
+
+					const intersect = intersects[0];
+          console.log(intersect);
+          const clickedModel = intersects[0].object;
+          console.log(clickedModel);
+					
+				}
+
+			}
 
 
       // Функция для обработки кликов/тапов
-      function onclick(event) 
-      {
-        // Для касания: нормализуем координаты тапа (от -1 до 1)
-        pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-        pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-        // Устанавливаем луч от камеры в сторону координат клика/тапа
-        raycaster.setFromCamera(pointer, camera);
-        // Находим объекты, которые пересекает луч
-        const intersects = raycaster.intersectObjects(scene.children);
-        // Если пересекает объект, выполняем действия
-        if (intersects.length > 0) {
-            const clickedModel = intersects[0].object;
-            console.log(clickedModel);
-        }
-      }
+      // function onclick(event) 
+      // {
+      //   // Для касания: нормализуем координаты тапа (от -1 до 1)
+      //   pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+      //   pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+      //   // Устанавливаем луч от камеры в сторону координат клика/тапа
+      //   raycaster.setFromCamera(pointer, camera);
+      //   // Находим объекты, которые пересекает луч
+      //   const intersects = raycaster.intersectObjects(scene.children);
+      //   // Если пересекает объект, выполняем действия
+      //   if (intersects.length > 0) {
+      //       const clickedModel = intersects[0].object;
+      //       console.log(clickedModel);
+      //   }
+      // }
           
       //   // Логика клика по объекту — увеличиваем его, а другие модели уменьшаем и делаем полупрозрачными
       //   if (!isModelScaled) {
