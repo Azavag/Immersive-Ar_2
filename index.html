@@ -94,25 +94,42 @@
         window.addEventListener('resize', onWindowResize, false);
 
         // Добавляем обработчик событий для тапа (нажатия)
-        document.addEventListener('click', onclick, false);
+        document.addEventListener('pointerDown', onPointerDown, false);
       }
 
-          // Функция для обработки кликов/тапов
-        function onclick(event) 
-        {
-          // Для касания: нормализуем координаты тапа (от -1 до 1)
-          pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-          pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-          // Устанавливаем луч от камеры в сторону координат клика/тапа
-          raycaster.setFromCamera(pointer, camera);
-          // Находим объекты, которые пересекает луч
-          const intersects = raycaster.intersectObjects(scene.children);
-           // Если пересекает объект, выполняем действия
-          if (intersects.length > 0) {
-              const clickedModel = intersects[0].object;
-              console.log(clickedModel);
-          }
+      function onPointerDown( event ) {
+				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+				raycaster.setFromCamera( pointer, camera );
+				const intersects = raycaster.intersectObjects( objects, false );
+
+				if ( intersects.length > 0 ) {
+
+					const intersect = intersects[0];
+          console.log(intersect);
+          const clickedModel = intersects[0].object;
+          console.log(clickedModel);
+					render();
+				}
+
+			}
+
+
+      // Функция для обработки кликов/тапов
+      function onclick(event) 
+      {
+        // Для касания: нормализуем координаты тапа (от -1 до 1)
+        pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+        // Устанавливаем луч от камеры в сторону координат клика/тапа
+        raycaster.setFromCamera(pointer, camera);
+        // Находим объекты, которые пересекает луч
+        const intersects = raycaster.intersectObjects(scene.children);
+        // Если пересекает объект, выполняем действия
+        if (intersects.length > 0) {
+            const clickedModel = intersects[0].object;
+            console.log(clickedModel);
         }
+      }
           
       //   // Логика клика по объекту — увеличиваем его, а другие модели уменьшаем и делаем полупрозрачными
       //   if (!isModelScaled) {
@@ -139,20 +156,23 @@
       // }
       // }
 
-      function onWindowResize() {
+      function onWindowResize()
+      {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
-      function resetModels() {    
+      function resetModels()
+      {    
         animateScalingAndOpacity(model1, standartModelScale, 1);  // Возвращаем модель 1 к нормальному размеру и прозрачности
         animateScalingAndOpacity(model2, standartModelScale, 1);  // Возвращаем модель 2 к нормальному размеру и прозрачности
         isModel1Scaled = false;
         isModel2Scaled = false;
       }
 
-      function animateScaling(model, targetScale, onComplete = null) {
+      function animateScaling(model, targetScale, onComplete = null)
+      {
         const startScale = model.scale.x;
         const scaleDiff = targetScale - startScale;
         let progress = 0;
@@ -173,7 +193,8 @@
         requestAnimationFrame(animate);
       }
 
-      function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null) {
+      function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null)
+      {
         const startScale = model.scale.x;
         const startOpacity = model.children[0].material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
         const scaleDiff = targetScale - startScale;
