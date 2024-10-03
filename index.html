@@ -96,22 +96,22 @@
         // Добавляем обработчик событий для тапа (нажатия)
         document.addEventListener('pointerDown', onPointerDown, false);
       }
-
-      function onPointerDown( event ) {
-				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
-				raycaster.setFromCamera( pointer, camera );
-				const intersects = raycaster.intersectObjects( objects, false );
-
-				if ( intersects.length > 0 ) {
-
-					const intersect = intersects[0];
-          console.log(intersect);
-          const clickedModel = intersects[0].object;
-          console.log(clickedModel);
-					render();
-				}
-
-			}
+	    
+	function onPointerDown( event )
+	{
+		pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+		raycaster.setFromCamera( pointer, camera );
+		const intersects = raycaster.intersectObjects(scene.children, false);
+	
+		if ( intersects.length > 0 ) 
+		{
+			const intersect = intersects[0];
+			console.log(intersect);
+			const clickedModel = intersects[0].object;
+			console.log(clickedModel);
+			render();
+		}
+	}
 
 
       // Функция для обработки кликов/тапов
