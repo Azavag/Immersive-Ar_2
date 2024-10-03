@@ -17,7 +17,7 @@
       let camera, scene, renderer;
       let model1, model2;
       let raycaster = new THREE.Raycaster();
-      let mouse = new THREE.Vector2();
+      let pointer = new THREE.Vector2();
 
       let isModel1Scaled = false;
       let isModel2Scaled = false;
@@ -94,50 +94,50 @@
         window.addEventListener('resize', onWindowResize, false);
 
         // Добавляем обработчик событий для тапа (нажатия)
-        window.addEventListener('touchstart', onTap, false); // Для мобильных устройств
+        window.addEventListener('click', onclick);
       }
 
           // Функция для обработки кликов/тапов
-        function onTap(event) {
-        if (event.type === 'touchstart') {
+        function onclick(event) 
+        {
           // Для касания: нормализуем координаты тапа (от -1 до 1)
-          mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-          mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-        }
+          pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+          pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
           // Устанавливаем луч от камеры в сторону координат клика/тапа
-          raycaster.setFromCamera(mouse, camera);
-
-        // Находим объекты, которые пересекает луч
-        const intersects = raycaster.intersectObjects([model1, model2], true);
-
-        // Если пересекает объект, выполняем действия
-        if (intersects.length > 0) {
-            const clickedModel = intersects[0].object;
-
-        // Логика клика по объекту — увеличиваем его, а другие модели уменьшаем и делаем полупрозрачными
-        if (!isModelScaled) {
-          clickedModel.scale.set(bigModelScale, bigModelScale, bigModelScale); // Увеличиваем выбранную модель
-          clickedModel.material.opacity = 1.0; // Ставим полную видимость для этой модели
-
-          // Для остальных объектов — уменьшаем и делаем полупрозрачными
-          [model1, model2].forEach((model) => {
-            if (model !== clickedModel) {
-              model.scale.set(smallModelScale, smallModelScale, smallModelScale); // Уменьшаем модель
-              model.material.transparent = true; // Включаем прозрачность
-              model.material.opacity = 0.5; // Делаем модель полупрозрачной
-            }
-          });
-
-          isModelScaled = true;
-        } else {
-          // Возвращаем все модели в исходное состояние
-          resetModels();
+          raycaster.setFromCamera(pointer, camera);
+          // Находим объекты, которые пересекает луч
+          const intersects = raycaster.intersectObjects(scene.children);
+           // Если пересекает объект, выполняем действия
+          if (intersects.length > 0) {
+              const clickedModel = intersects[0].object;
+              console.log(clickedModel);
+          }
         }
-      } else {
-        // Если клик вне моделей, возвращаем все модели в исходное состояние
-        resetModels();
-      }
-      }
+          
+      //   // Логика клика по объекту — увеличиваем его, а другие модели уменьшаем и делаем полупрозрачными
+      //   if (!isModelScaled) {
+      //     clickedModel.scale.set(bigModelScale, bigModelScale, bigModelScale); // Увеличиваем выбранную модель
+      //     clickedModel.material.opacity = 1.0; // Ставим полную видимость для этой модели
+
+      //     // Для остальных объектов — уменьшаем и делаем полупрозрачными
+      //     [model1, model2].forEach((model) => {
+      //       if (model !== clickedModel) {
+      //         model.scale.set(smallModelScale, smallModelScale, smallModelScale); // Уменьшаем модель
+      //         model.material.transparent = true; // Включаем прозрачность
+      //         model.material.opacity = 0.5; // Делаем модель полупрозрачной
+      //       }
+      //     });
+
+      //     isModelScaled = true;
+      //   } else {
+      //     // Возвращаем все модели в исходное состояние
+      //     resetModels();
+      //   }
+      // } else {
+      //   // Если клик вне моделей, возвращаем все модели в исходное состояние
+      //   resetModels();
+      // }
+      // }
 
       function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
