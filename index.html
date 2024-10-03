@@ -64,11 +64,14 @@
          const loader = new THREE.GLTFLoader();
 
          // Добавление первого куба
-        const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        const geometry = new THREE.BoxGeometry(standartModelScale, standartModelScale, standartModelScale);
+        
         const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
         model1 = new THREE.Mesh(geometry, material1);
         model1.position.set(-0.5, 0, -1);  // Перемещаем кубы дальше друг от друга
+        model1.setSize(standartModelScale, standartModelScale, standartModelScale);
         scene.add(model1);
+        console.log(model1.scale.x);
         objects.push(model1);
 
         // Добавление второго куба
@@ -98,24 +101,30 @@
         window.addEventListener('resize', onWindowResize, false);
 
         // Добавляем обработчик событий для тапа (нажатия)
-        document.addEventListener('pointerDown', onPointerDown, false);
+        document.addEventListener('pointerdown', onPointerDown, false);
       }
 
       function onPointerDown( event ) {
         console.log("Click");
 				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
 				raycaster.setFromCamera( pointer, camera );
-				const intersects = raycaster.intersectObjects(scene.children, false);
+				const intersects = raycaster.intersectObjects(objects, false);
 
 				if ( intersects.length > 0 ) {
-
-					const intersect = intersects[0];
-          console.log(intersect);
           const clickedModel = intersects[0].object;
-          console.log(clickedModel);
-					
-				}
+					animateScaling(clickedModel, bigModelScale);
 
+          objects.forEach((model) => {
+            if (model !== clickedModel) {
+              isModelScaled = true;
+              animateScalingAndOpacity(model, smallModelScale, 0.3);
+            }
+          });
+				}
+        else {
+          resetModels();
+
+        }
 			}
 
 
@@ -201,7 +210,7 @@
       function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null)
       {
         const startScale = model.scale.x;
-        const startOpacity = model.children[0].material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
+        const startOpacity = model.material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
         const scaleDiff = targetScale - startScale;
         const opacityDiff = targetOpacity - startOpacity;
         let progress = 0;
