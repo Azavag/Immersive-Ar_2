@@ -163,12 +163,13 @@
   
 
     function resetModels() {
+      if(isModelScaled){
       objects.forEach((model) => {
         // animateScalingAndOpacity(model, smallModelScale, 0.3);
-        animateScaling(model, standartModelScale);
-        
-      });
+          animateScaling(model, standartModelScale);       
+        });     
       isModelScaled = false;
+      }
     }
 
     function animateScaling(model, targetScale, onComplete = null) {      
@@ -185,7 +186,7 @@
         if (progress > 1) {
           progress = 1;
         }
-        
+
         console.log("progress" + progress);
         const newScale = startScale + scaleDiff * progress;
 
