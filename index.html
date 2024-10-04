@@ -94,6 +94,8 @@
         model1 = gltf.scene;
         model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
         model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+        scene.add(model1);
+        objects.push(model1);
       });
 
       // Загрузка второй модели
@@ -101,21 +103,22 @@
         model2 = gltf.scene;
         model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
         model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+        scene.add(model2);
+        objects.push(model2);
       });
        // Загрузка второй модели
        loader.load('models/building1.glb', function (gltf) {
         model3 = gltf.scene;
         model3.position.set(0.1, 0, -0.5);  // Позиционируем вторую модель
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+        scene.add(model3);
+        objects.push(model3);
       });
 
 
-      scene.add(model1);
-      objects.push(model1);
-      scene.add(model2);
-      objects.push(model2);
-      scene.add(model3);
-      objects.push(model3);
+     
+     
+     
       // Изменение размеров окна
       window.addEventListener('resize', onWindowResize, false);
 
