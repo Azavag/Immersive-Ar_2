@@ -180,6 +180,12 @@
 
       function animate() {
         progress += scalingSpeed;
+
+         // Останавливаем прогресс, если он превышает 1 (в случае, если скорость слишком велика)
+        if (progress > 1) {
+          progress = 1;
+        }
+        
         console.log("progress" + progress);
         const newScale = startScale + scaleDiff * progress;
 
@@ -194,37 +200,37 @@
       requestAnimationFrame(animate);
     }
 
-    function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null) {
-      const startScale = model.scale.x;
-      const startOpacity = model.material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
-      const scaleDiff = targetScale - startScale;
-      const opacityDiff = targetOpacity - startOpacity;
-      let progress = 0;
+    // function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null) {
+    //   const startScale = model.scale.x;
+    //   const startOpacity = model.material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
+    //   const scaleDiff = targetScale - startScale;
+    //   const opacityDiff = targetOpacity - startOpacity;
+    //   let progress = 0;
 
-      function animate() {
-        progress += scalingSpeed;
-        const newScale = startScale + scaleDiff * progress;
-        const newOpacity = startOpacity + opacityDiff * progress;
+    //   function animate() {
+    //     progress += scalingSpeed;
+    //     const newScale = startScale + scaleDiff * progress;
+    //     const newOpacity = startOpacity + opacityDiff * progress;
 
-        model.scale.set(newScale, newScale, newScale);
+    //     model.scale.set(newScale, newScale, newScale);
 
-        // Устанавливаем прозрачность для всех дочерних материалов
-        model.traverse((child) => {
-          if (child.isMesh && child.material) {
-            child.material.transparent = true;
-            child.material.opacity = newOpacity;
-          }
-        });
+    //     // Устанавливаем прозрачность для всех дочерних материалов
+    //     model.traverse((child) => {
+    //       if (child.isMesh && child.material) {
+    //         child.material.transparent = true;
+    //         child.material.opacity = newOpacity;
+    //       }
+    //     });
 
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else if (onComplete) {
-          onComplete();  // Выполняем коллбек после завершения анимации
-        }
-      }
+    //     if (progress < 1) {
+    //       requestAnimationFrame(animate);
+    //     } else if (onComplete) {
+    //       onComplete();  // Выполняем коллбек после завершения анимации
+    //     }
+    //   }
 
-      requestAnimationFrame(animate);
-    }
+    //   requestAnimationFrame(animate);
+    // }
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
