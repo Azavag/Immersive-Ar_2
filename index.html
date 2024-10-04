@@ -164,22 +164,23 @@
     }
 
     function animateScaling(model, targetScale, onComplete = null) {
-      const startScale = model.scale.x;
-      const scaleDiff = targetScale - startScale;
-      let progress = 0;
+      model.scale.set(targetScale, targetScale, targetScale);
+      // const startScale = model.scale.x;
+      // const scaleDiff = targetScale - startScale;
+      // let progress = 0;
 
-      function animate() {
-        progress += scalingSpeed;
-        const newScale = startScale + scaleDiff * progress;
+      // function animate() {
+      //   progress += scalingSpeed;
+      //   const newScale = startScale + scaleDiff * progress;
 
-        model.scale.set(newScale, newScale, newScale);
-        console.log(model.scale);
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else if (onComplete) {
-          onComplete();  // Выполняем коллбек после завершения анимации
-        }
-      }
+      //   model.scale.set(newScale, newScale, newScale);
+      //   console.log(model.scale);
+      //   if (progress < 1) {
+      //     requestAnimationFrame(animate);
+      //   } else if (onComplete) {
+      //     onComplete();  // Выполняем коллбек после завершения анимации
+      //   }
+      // }
 
       requestAnimationFrame(animate);
     }
