@@ -31,6 +31,9 @@
     let animationInProgress = false;
     const objects = [];
 
+    let hitTestSource = null;
+    let hitTestSourceRequested = false;
+
     init();
     render();
     animate();
@@ -49,6 +52,7 @@
       // Создание рендерера с поддержкой WebXR
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
       renderer.xr.enabled = true;
       document.body.appendChild(renderer.domElement);
 
@@ -69,26 +73,6 @@
 
       // Добавление первого куба
       const geometry = new THREE.BoxGeometry(1, 1, 1);
-
-      // const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
-      // model1 = new THREE.Mesh(geometry, material1);
-      // model1.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      // model1.position.set(-0.5, 0, -0.5);  // Перемещаем кубы дальше друг от друга
-
-
-      // // Добавление второго куба
-      // const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
-      // model2 = new THREE.Mesh(geometry, material2);
-      // model2.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      // model2.position.set(0.5, 0, -0.5);
-
-
-      // // Добавление второго куба
-      // const material3 = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 1 });
-      // model3 = new THREE.Mesh(geometry, material2);
-      // model3.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      // model3.position.set(0, 0, 0.5);
-
 
       //Загрузка первой модели
       loader.load('models/building1.glb', function (gltf) {
@@ -209,51 +193,54 @@
       requestAnimationFrame(animate);
     }
 
-    // function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null) {
-    //   const startScale = model.scale.x;
-    //   const startOpacity = model.material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
-    //   const scaleDiff = targetScale - startScale;
-    //   const opacityDiff = targetOpacity - startOpacity;
-    //   let progress = 0;
+    function render(timestamp, frame) {
+      if (frame) {
+        const referenceSpace = renderer.xr.getReferenceSpace();
+        const session = renderer.xr.getSession();
 
-    //   function animate() {
-    //     progress += scalingSpeed;
-    //     const newScale = startScale + scaleDiff * progress;
-    //     const newOpacity = startOpacity + opacityDiff * progress;
+        if (hitTestSourceRequested === false) {
+          session.requestReferenceSpace('viewer').then(function (referenceSpace) {
+            session.requestHitTestSource({ space: referenceSpace }).then(function (source) {
+              hitTestSource = source;
+            });
+          });
 
-    //     model.scale.set(newScale, newScale, newScale);
+          session.addEventListener('end', function () {
+            hitTestSourceRequested = false;
+            hitTestSource = null;
+          });
 
-    //     // Устанавливаем прозрачность для всех дочерних материалов
-    //     model.traverse((child) => {
-    //       if (child.isMesh && child.material) {
-    //         child.material.transparent = true;
-    //         child.material.opacity = newOpacity;
-    //       }
-    //     });
+          hitTestSourceRequested = true;
+        }
 
-    //     if (progress < 1) {
-    //       requestAnimationFrame(animate);
-    //     } else if (onComplete) {
-    //       onComplete();  // Выполняем коллбек после завершения анимации
-    //     }
-    //   }
+        if (hitTestSource) {
+          const hitTestResults = frame.getHitTestResults(hitTestSource);
 
-    //   requestAnimationFrame(animate);
-    // }
+          if (hitTestResults.length > 0) {
+            const hit = hitTestResults[0];
+            const pose = hit.getPose(referenceSpace);
 
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+            // Устанавливаем модель в позицию, где плоскость найдена
+            model.position.setFromMatrixPosition(pose.transform.matrix);
+            model.visible = true;
+          }
+        }
+      }
     }
 
-    function animate() {
-      renderer.setAnimationLoop(render);
-    }
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
 
-    function render() {
-      renderer.render(scene, camera);
-    }
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
   </script>
 </body>
 
