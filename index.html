@@ -193,10 +193,6 @@
       requestAnimationFrame(animate);
     }
 
-     function render() {
-        renderer.render(scene, camera);
-      }
-
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -205,6 +201,9 @@
 
     function animate() {
       renderer.setAnimationLoop(render);
+    }
+     function render() {
+      renderer.render(scene, camera);
     }
   </script>
 </body>
