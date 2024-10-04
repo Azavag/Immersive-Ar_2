@@ -24,8 +24,7 @@
     let isModel1Scaled = false;
     let isModel2Scaled = false;
     let isModelScaled = false;
-    let scalingSpeed;
-    let scalingTime = 1.5;  // Время анимации
+    let scalingTime = 1.2;  // Время анимации
     let standartModelScale = 0.03;
     let smallModelScale = 0.015;
     let bigModelScale = 0.05;
@@ -175,7 +174,8 @@
     function animateScaling(model, targetScale, onComplete = null) {      
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
-      scalingSpeed = scaleDiff / scalingTime;
+      let scalingSpeed = scaleDiff / scalingTime;
+      console.log("scalingSpeed" + scalingSpeed);
       let progress = 0;
 
       function animate() {
