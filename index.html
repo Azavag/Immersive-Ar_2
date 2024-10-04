@@ -91,7 +91,7 @@
 
 
       //Загрузка первой модели
-      loader.load('models/building1.glb', function (gltf) {        
+      loader.load('models/building1.glb', function (gltf) {
         model1 = gltf.scene;
         model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
         model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
@@ -107,8 +107,8 @@
         scene.add(model2);
         objects.push(model2);
       });
-       // Загрузка второй модели
-       loader.load('models/building1.glb', function (gltf) {
+      // Загрузка второй модели
+      loader.load('models/building1.glb', function (gltf) {
         model3 = gltf.scene;
         model3.position.set(0, 0, -0.5);  // Позиционируем вторую модель
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
@@ -117,9 +117,9 @@
       });
 
       console.log(objects);
-     
-     
-     
+
+
+
       // Изменение размеров окна
       window.addEventListener('resize', onWindowResize, false);
 
@@ -128,7 +128,7 @@
     }
 
     function onPointerDown(event) {
-      if(animationInProgress){
+      if (animationInProgress) {
         console.log("AnimationInProgress");
         return;
       }
@@ -141,15 +141,15 @@
       if (intersects.length > 0) {
         let clickedModel = intersects[0].object;
 
-      // Поднимаемся вверх по иерархии, чтобы получить корневую модель
-      while (clickedModel.parent && !objects.includes(clickedModel)) {
-        clickedModel = clickedModel.parent;
-      }
+        // Поднимаемся вверх по иерархии, чтобы получить корневую модель
+        while (clickedModel.parent && !objects.includes(clickedModel)) {
+          clickedModel = clickedModel.parent;
+        }
         console.log(clickedModel);
         if (!isModelScaled) {
           animateScaling(clickedModel, bigModelScale);
           objects.forEach((model) => {
-            if (model !== clickedModel) {             
+            if (model !== clickedModel) {
               animateScaling(model, smallModelScale);
               // animateScalingAndOpacity(model, smallModelScale, 0.3);
             }
@@ -165,39 +165,44 @@
       }
     }
 
-  
+
 
     function resetModels() {
-      if(isModelScaled){
-      objects.forEach((model) => {
-        // animateScalingAndOpacity(model, smallModelScale, 0.3);
-          animateScaling(model, standartModelScale);       
-        });     
-      isModelScaled = false;
+      if (isModelScaled) {
+        objects.forEach((model) => {
+          // animateScalingAndOpacity(model, smallModelScale, 0.3);
+          animateScaling(model, standartModelScale);
+        });
+        isModelScaled = false;
       }
     }
 
-    function animateScaling(model, targetScale, onComplete = null) {   
-      animationInProgress = true;   
+    function animateScaling(model, targetScale, onComplete = null) {
+      animationInProgress = true;
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
       console.log("scalingSpeed" + scalingSpeed);
       let progress = 0;
-        //СДЕЛАТЬ ПРОВЕРКУ НА ПРОЦЕСС АНИМАЦИЮ
+      //СДЕЛАТЬ ПРОВЕРКУ НА ПРОЦЕСС АНИМАЦИЮ
       function animate() {
         progress += scalingSpeed;
 
+        if (progress > 1) {
+          progress = 1; // Завершаем анимацию, если прогресс превышает 1
+        }
         console.log("progress" + progress);
         const newScale = startScale + scaleDiff * progress;
         model.scale.set(newScale, newScale, newScale);
 
         if (progress < 1) {
           requestAnimationFrame(animate);
-        } else if (onComplete) {
-          progress = 1;
-          animationInProgress = false;
-          onComplete();  // Выполняем коллбек после завершения анимации
+        } else {
+          animationInProgress = false; // Анимация завершена, сбрасываем флаг
+
+          if (onComplete) {
+            onComplete(); // Выполняем коллбек, если передан
+          }
         }
       }
 
