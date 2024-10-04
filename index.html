@@ -24,7 +24,7 @@
     let isModel1Scaled = false;
     let isModel2Scaled = false;
     let isModelScaled = false;
-    let scalingSpeed = 0.0005;  // Скорость анимации
+    let scalingSpeed = 0.005;  // Скорость анимации
     let standartModelScale = 0.03;
     let smallModelScale = 0.015;
     let bigModelScale = 0.05;
@@ -166,25 +166,23 @@
       isModelScaled = false;
     }
 
-    function animateScaling(model, targetScale, onComplete = null) {
-      model.scale.set(targetScale, targetScale, targetScale);
-      console.log(model.scale.x);
-      // const startScale = model.scale.x;
-      // const scaleDiff = targetScale - startScale;
-      // let progress = 0;
+    function animateScaling(model, targetScale, onComplete = null) {      
+      const startScale = model.scale.x;
+      const scaleDiff = targetScale - startScale;
+      let progress = 0;
 
-      // function animate() {
-      //   progress += scalingSpeed;
-      //   const newScale = startScale + scaleDiff * progress;
+      function animate() {
+        progress += scalingSpeed;
+        const newScale = startScale + scaleDiff * progress;
 
-      //   model.scale.set(newScale, newScale, newScale);
-      //   console.log(model.scale);
-      //   if (progress < 1) {
-      //     requestAnimationFrame(animate);
-      //   } else if (onComplete) {
-      //     onComplete();  // Выполняем коллбек после завершения анимации
-      //   }
-      // }
+        model.scale.set(newScale, newScale, newScale);
+        console.log(model.scale);
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else if (onComplete) {
+          onComplete();  // Выполняем коллбек после завершения анимации
+        }
+      }
 
       requestAnimationFrame(animate);
     }
