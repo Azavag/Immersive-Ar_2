@@ -24,7 +24,7 @@
     let isModel1Scaled = false;
     let isModel2Scaled = false;
     let isModelScaled = false;
-    let scalingSpeed = 0.1;  // Скорость анимации
+    let scalingSpeed = 0.05;  // Скорость анимации
     let standartModelScale = 0.5;
     let smallModelScale = 0.25;
     let bigModelScale = 0.75;
@@ -148,7 +148,7 @@
       objects.forEach((model) => {
         // animateScalingAndOpacity(model, smallModelScale, 0.3);
         animateScaling(model, standartModelScale);
-        console.log(model +' '+ model.scale.x);
+        
       });
       isModelScaled = false;
     }
@@ -163,7 +163,7 @@
         const newScale = startScale + scaleDiff * progress;
 
         model.scale.set(newScale, newScale, newScale);
-
+        console.log(model.scale);
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else if (onComplete) {
