@@ -130,10 +130,12 @@
       console.log("Click");
       pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
       raycaster.setFromCamera(pointer, camera);
-      const intersects = raycaster.intersectObjects(objects, false);
+
+      const intersects = raycaster.intersectObjects(objects, true);
 
       if (intersects.length > 0) {
         const clickedModel = intersects[0].object;
+        console.log(clickedModel);
         if (!isModelScaled) {
           animateScaling(clickedModel, bigModelScale);
           objects.forEach((model) => {
