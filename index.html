@@ -127,6 +127,7 @@
     }
 
     function onPointerDown(event) {
+      console.log("Click");
       pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
       raycaster.setFromCamera(pointer, camera);
       const intersects = raycaster.intersectObjects(objects, false);
@@ -165,6 +166,7 @@
 
     function animateScaling(model, targetScale, onComplete = null) {
       model.scale.set(targetScale, targetScale, targetScale);
+      console.log(model.scale.x);
       // const startScale = model.scale.x;
       // const scaleDiff = targetScale - startScale;
       // let progress = 0;
