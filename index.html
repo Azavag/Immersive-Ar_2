@@ -28,6 +28,7 @@
     let standartModelScale = 0.03;
     let smallModelScale = 0.015;
     let bigModelScale = 0.05;
+    let animationInProgress = false;
     const objects = [];
 
     init();
@@ -127,6 +128,10 @@
     }
 
     function onPointerDown(event) {
+      if(animationInProgress){
+        console.log("AnimationInProgress");
+        return;
+      }
       console.log("Click");
       pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
       raycaster.setFromCamera(pointer, camera);
@@ -172,28 +177,26 @@
       }
     }
 
-    function animateScaling(model, targetScale, onComplete = null) {      
+    function animateScaling(model, targetScale, onComplete = null) {   
+      animationInProgress = true;   
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
       console.log("scalingSpeed" + scalingSpeed);
       let progress = 0;
-
+        //СДЕЛАТЬ ПРОВЕРКУ НА ПРОЦЕСС АНИМАЦИЮ
       function animate() {
         progress += scalingSpeed;
 
-         // Останавливаем прогресс, если он превышает 1 (в случае, если скорость слишком велика)
-        if (progress > 1) {
-          progress = 1;
-        }
-
         console.log("progress" + progress);
         const newScale = startScale + scaleDiff * progress;
-
         model.scale.set(newScale, newScale, newScale);
+
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else if (onComplete) {
+          progress = 1;
+          animationInProgress = false;
           onComplete();  // Выполняем коллбек после завершения анимации
         }
       }
