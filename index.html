@@ -86,10 +86,10 @@
       objects.push(model2);
 
       // Добавление второго куба
-      const material3 = new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 1 });
+      const material3 = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 1 });
       model3 = new THREE.Mesh(geometry, material2);
       model3.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      model3.position.set(0, 0, -2);
+      model3.position.set(0, 0, 1);
       scene.add(model3);
       objects.push(model3);
 
@@ -126,12 +126,12 @@
         if (!isModelScaled) {
           animateScaling(clickedModel, bigModelScale);
           objects.forEach((model) => {
-            if (model !== clickedModel) {
-              isModelScaled = true;
+            if (model !== clickedModel) {             
               animateScaling(model, smallModelScale);
               // animateScalingAndOpacity(model, smallModelScale, 0.3);
             }
           });
+          isModelScaled = true;
         }
         else {
           resetModels();
@@ -148,6 +148,7 @@
       objects.forEach((model) => {
         // animateScalingAndOpacity(model, smallModelScale, 0.3);
         animateScaling(model, standartModelScale);
+        console.log(model +' '+ model.scale.x);
       });
       isModelScaled = false;
     }
