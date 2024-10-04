@@ -180,6 +180,7 @@
 
       function animate() {
         progress += scalingSpeed;
+        console.log("progress" + progress);
         const newScale = startScale + scaleDiff * progress;
 
         model.scale.set(newScale, newScale, newScale);
