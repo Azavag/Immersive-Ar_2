@@ -41,7 +41,7 @@
       // Настройка камеры
       // Устанавливаем позицию камеры сверху
       camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 2, 1); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
+      camera.position.set(0, 1, 1); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
       camera.lookAt(0, 0, 0); // Направляем камеру на центр сцены
       scene.add(camera);
 
@@ -109,13 +109,13 @@
        // Загрузка второй модели
        loader.load('models/building1.glb', function (gltf) {
         model3 = gltf.scene;
-        model3.position.set(0.1, 0, -0.5);  // Позиционируем вторую модель
+        model3.position.set(0, 0, -0.5);  // Позиционируем вторую модель
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model3);
         objects.push(model3);
       });
 
-
+      console.log(objects);
      
      
      
@@ -218,7 +218,7 @@
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
-      // camera.updateProjectionMatrix();
+      camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
