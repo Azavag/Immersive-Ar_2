@@ -71,7 +71,6 @@
       const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
       model1 = new THREE.Mesh(geometry, material1);
       model1.position.set(-0.5, 0, -1);  // Перемещаем кубы дальше друг от друга
-      model1.setSize(standartModelScale, standartModelScale, standartModelScale);
       scene.add(model1);
       console.log(model1.scale.x);
       objects.push(model1);
@@ -86,7 +85,7 @@
       // Добавление второго куба
       const material3 = new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 1 });
       model3 = new THREE.Mesh(geometry, material2);
-      model3.position.set(0.5, 0, 0);
+      model3.position.set(0.5, 0, 1);
       scene.add(model3);
       objects.push(model3);
 
