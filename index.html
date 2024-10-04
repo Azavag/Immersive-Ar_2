@@ -24,10 +24,10 @@
     let isModel1Scaled = false;
     let isModel2Scaled = false;
     let isModelScaled = false;
-    let scalingSpeed = 0.05;  // Скорость анимации
-    let standartModelScale = 0.5;
-    let smallModelScale = 0.25;
-    let bigModelScale = 0.75;
+    let scalingSpeed = 0.0005;  // Скорость анимации
+    let standartModelScale = 0.03;
+    let smallModelScale = 0.015;
+    let bigModelScale = 0.05;
     const objects = [];
 
     init();
@@ -69,46 +69,53 @@
       // Добавление первого куба
       const geometry = new THREE.BoxGeometry(1, 1, 1);
 
-      const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
-      model1 = new THREE.Mesh(geometry, material1);
-      model1.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      model1.position.set(-0.5, 0, -0.5);  // Перемещаем кубы дальше друг от друга
-      scene.add(model1);
-      console.log(model1.scale.x);
-      objects.push(model1);
+      // const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
+      // model1 = new THREE.Mesh(geometry, material1);
+      // model1.scale.set(standartModelScale, standartModelScale, standartModelScale);
+      // model1.position.set(-0.5, 0, -0.5);  // Перемещаем кубы дальше друг от друга
 
-      // Добавление второго куба
-      const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
-      model2 = new THREE.Mesh(geometry, material2);
-      model2.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      model2.position.set(0.5, 0, -0.5);
+
+      // // Добавление второго куба
+      // const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
+      // model2 = new THREE.Mesh(geometry, material2);
+      // model2.scale.set(standartModelScale, standartModelScale, standartModelScale);
+      // model2.position.set(0.5, 0, -0.5);
+
+
+      // // Добавление второго куба
+      // const material3 = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 1 });
+      // model3 = new THREE.Mesh(geometry, material2);
+      // model3.scale.set(standartModelScale, standartModelScale, standartModelScale);
+      // model3.position.set(0, 0, 0.5);
+
+
+      //Загрузка первой модели
+      loader.load('models/building1.glb', function (gltf) {
+        model1 = gltf.scene;
+        model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
+        model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+      });
+
+      // Загрузка второй модели
+      loader.load('models/building2.glb', function (gltf) {
+        model2 = gltf.scene;
+        model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
+        model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+      });
+       // Загрузка второй модели
+       loader.load('models/building1.glb', function (gltf) {
+        model3 = gltf.scene;
+        model3.position.set(0.1, 0, -0.5);  // Позиционируем вторую модель
+        model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+      });
+
+
+      scene.add(model1);
+      objects.push(model1);
       scene.add(model2);
       objects.push(model2);
-
-      // Добавление второго куба
-      const material3 = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 1 });
-      model3 = new THREE.Mesh(geometry, material2);
-      model3.scale.set(standartModelScale, standartModelScale, standartModelScale);
-      model3.position.set(0, 0, 0.5);
       scene.add(model3);
       objects.push(model3);
-
-      // Загрузка первой модели
-      // loader.load('models/building1.glb', function (gltf) {
-      //   model1 = gltf.scene;
-      //   model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
-      //   model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-      //   scene.add(model1);
-      // });
-
-      // // Загрузка второй модели
-      // loader.load('models/building2.glb', function (gltf) {
-      //   model2 = gltf.scene;
-      //   model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
-      //   model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-      //   scene.add(model2);
-      // });
-
       // Изменение размеров окна
       window.addEventListener('resize', onWindowResize, false);
 
