@@ -1,252 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Clickable Cubes</title>
-    <!-- Подключаем Three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
-    <!-- Подключаем GLTFLoader -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/examples/js/loaders/GLTFLoader.js"></script>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <!-- Подключаем ARButton как модуль -->
-    <script type="module">
-      import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
 
-      let camera, scene, renderer;
-      let model1, model2;
-      let raycaster = new THREE.Raycaster();
-      let pointer = new THREE.Vector2();
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Clickable Cubes</title>
+  <!-- Подключаем Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
+  <!-- Подключаем GLTFLoader -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/examples/js/loaders/GLTFLoader.js"></script>
+</head>
 
-      let isModel1Scaled = false;
-      let isModel2Scaled = false;
-      let scalingSpeed = 0.1;  // Скорость анимации
-      let standartModelScale = 0.5;
-      let smallModelScale = 0.25;
-      let bigModelScale = 0.75;
-      const objects = [];
+<body style="margin: 0; overflow: hidden;">
+  <!-- Подключаем ARButton как модуль -->
+  <script type="module">
+    import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
 
-      init();
-      render();
-      animate();
+    let camera, scene, renderer;
+    let model1, model2, model3;
+    let raycaster = new THREE.Raycaster();
+    let pointer = new THREE.Vector2();
 
-      function init() {
-        // Создание сцены
-        scene = new THREE.Scene();
+    let isModel1Scaled = false;
+    let isModel2Scaled = false;
+    let scalingSpeed = 0.1;  // Скорость анимации
+    let standartModelScale = 0.5;
+    let smallModelScale = 0.25;
+    let bigModelScale = 0.75;
+    const objects = [];
 
-        // Настройка камеры
-        // Устанавливаем позицию камеры сверху
-        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 1, 1); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
-        camera.lookAt(0, 0, 0); // Направляем камеру на центр сцены
-        scene.add(camera);
+    init();
+    render();
+    animate();
 
-        // Создание рендерера с поддержкой WebXR
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.xr.enabled = true;
-        document.body.appendChild(renderer.domElement);
+    function init() {
+      // Создание сцены
+      scene = new THREE.Scene();
 
-        // Добавляем AR-кнопку
-        const arButton = ARButton.createButton(renderer);
-        document.body.appendChild(arButton);
-        
-        // Добавляем свет в сцену
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-        scene.add(ambientLight);
+      // Настройка камеры
+      // Устанавливаем позицию камеры сверху
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 2, 1); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
+      camera.lookAt(0, 0, 0); // Направляем камеру на центр сцены
+      scene.add(camera);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(1, 1, 1).normalize();
-        scene.add(directionalLight);
+      // Создание рендерера с поддержкой WebXR
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true;
+      document.body.appendChild(renderer.domElement);
 
-         // Используем GLTFLoader для загрузки моделей
-         const loader = new THREE.GLTFLoader();
+      // Добавляем AR-кнопку
+      const arButton = ARButton.createButton(renderer);
+      document.body.appendChild(arButton);
 
-         // Добавление первого куба
-        const geometry = new THREE.BoxGeometry(standartModelScale, standartModelScale, standartModelScale);
-        
-        const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
-        model1 = new THREE.Mesh(geometry, material1);
-        model1.position.set(-0.5, 0, -1);  // Перемещаем кубы дальше друг от друга
-        model1.setSize(standartModelScale, standartModelScale, standartModelScale);
-        scene.add(model1);
-        console.log(model1.scale.x);
-        objects.push(model1);
+      // Добавляем свет в сцену
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambientLight);
 
-        // Добавление второго куба
-        const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
-        model2 = new THREE.Mesh(geometry, material2);
-        model2.position.set(0.5, 0, -1);
-        scene.add(model2);
-        objects.push(model2);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(1, 1, 1).normalize();
+      scene.add(directionalLight);
 
-         // Загрузка первой модели
-        // loader.load('models/building1.glb', function (gltf) {
-        //   model1 = gltf.scene;
-        //   model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
-        //   model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-        //   scene.add(model1);
-        // });
+      // Используем GLTFLoader для загрузки моделей
+      const loader = new THREE.GLTFLoader();
 
-        // // Загрузка второй модели
-        // loader.load('models/building2.glb', function (gltf) {
-        //   model2 = gltf.scene;
-        //   model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
-        //   model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-        //   scene.add(model2);
-        // });
+      // Добавление первого куба
+      const geometry = new THREE.BoxGeometry(standartModelScale, standartModelScale, standartModelScale);
 
-        // Изменение размеров окна
-        window.addEventListener('resize', onWindowResize, false);
+      const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
+      model1 = new THREE.Mesh(geometry, material1);
+      model1.position.set(-0.5, 0, -1);  // Перемещаем кубы дальше друг от друга
+      model1.setSize(standartModelScale, standartModelScale, standartModelScale);
+      scene.add(model1);
+      console.log(model1.scale.x);
+      objects.push(model1);
 
-        // Добавляем обработчик событий для тапа (нажатия)
-        document.addEventListener('pointerdown', onPointerDown, false);
-      }
+      // Добавление второго куба
+      const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 1 });
+      model2 = new THREE.Mesh(geometry, material2);
+      model2.position.set(0.5, 0, -1);
+      scene.add(model2);
+      objects.push(model2);
 
-      function onPointerDown( event ) {
-        console.log("Click");
-				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
-				raycaster.setFromCamera( pointer, camera );
-				const intersects = raycaster.intersectObjects(objects, false);
+      // Добавление второго куба
+      const material3 = new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 1 });
+      model3 = new THREE.Mesh(geometry, material2);
+      model3.position.set(0.5, 0, 0);
+      scene.add(model3);
+      objects.push(model3);
 
-				if ( intersects.length > 0 ) {
-          const clickedModel = intersects[0].object;
-					animateScaling(clickedModel, bigModelScale);
+      // Загрузка первой модели
+      // loader.load('models/building1.glb', function (gltf) {
+      //   model1 = gltf.scene;
+      //   model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
+      //   model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+      //   scene.add(model1);
+      // });
 
+      // // Загрузка второй модели
+      // loader.load('models/building2.glb', function (gltf) {
+      //   model2 = gltf.scene;
+      //   model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
+      //   model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+      //   scene.add(model2);
+      // });
+
+      // Изменение размеров окна
+      window.addEventListener('resize', onWindowResize, false);
+
+      // Добавляем обработчик событий для тапа (нажатия)
+      document.addEventListener('pointerdown', onPointerDown, false);
+    }
+
+    function onPointerDown(event) {
+      pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(objects, false);
+
+      if (intersects.length > 0) {
+        const clickedModel = intersects[0].object;
+        if (!isModelScaled) {
+          animateScaling(clickedModel, bigModelScale);
           objects.forEach((model) => {
             if (model !== clickedModel) {
               isModelScaled = true;
-              animateScalingAndOpacity(model, smallModelScale, 0.3);
+              animateScaling(model, smallModelScale);
+              // animateScalingAndOpacity(model, smallModelScale, 0.3);
             }
           });
-				}
+        }
         else {
           resetModels();
-
         }
-			}
-
-
-      // Функция для обработки кликов/тапов
-      // function onclick(event) 
-      // {
-      //   // Для касания: нормализуем координаты тапа (от -1 до 1)
-      //   pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-      //   pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-      //   // Устанавливаем луч от камеры в сторону координат клика/тапа
-      //   raycaster.setFromCamera(pointer, camera);
-      //   // Находим объекты, которые пересекает луч
-      //   const intersects = raycaster.intersectObjects(scene.children);
-      //   // Если пересекает объект, выполняем действия
-      //   if (intersects.length > 0) {
-      //       const clickedModel = intersects[0].object;
-      //       console.log(clickedModel);
-      //   }
-      // }
-          
-      //   // Логика клика по объекту — увеличиваем его, а другие модели уменьшаем и делаем полупрозрачными
-      //   if (!isModelScaled) {
-      //     clickedModel.scale.set(bigModelScale, bigModelScale, bigModelScale); // Увеличиваем выбранную модель
-      //     clickedModel.material.opacity = 1.0; // Ставим полную видимость для этой модели
-
-      //     // Для остальных объектов — уменьшаем и делаем полупрозрачными
-      //     [model1, model2].forEach((model) => {
-      //       if (model !== clickedModel) {
-      //         model.scale.set(smallModelScale, smallModelScale, smallModelScale); // Уменьшаем модель
-      //         model.material.transparent = true; // Включаем прозрачность
-      //         model.material.opacity = 0.5; // Делаем модель полупрозрачной
-      //       }
-      //     });
-
-      //     isModelScaled = true;
-      //   } else {
-      //     // Возвращаем все модели в исходное состояние
-      //     resetModels();
-      //   }
-      // } else {
-      //   // Если клик вне моделей, возвращаем все модели в исходное состояние
-      //   resetModels();
-      // }
-      // }
-
-      function onWindowResize()
-      {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
       }
-
-      function resetModels()
-      {    
-        animateScalingAndOpacity(model1, standartModelScale, 1);  // Возвращаем модель 1 к нормальному размеру и прозрачности
-        animateScalingAndOpacity(model2, standartModelScale, 1);  // Возвращаем модель 2 к нормальному размеру и прозрачности
-        isModel1Scaled = false;
-        isModel2Scaled = false;
+      else {
+        resetModels();
       }
+    }
 
-      function animateScaling(model, targetScale, onComplete = null)
-      {
-        const startScale = model.scale.x;
-        const scaleDiff = targetScale - startScale;
-        let progress = 0;
+  
 
-        function animate() {
-          progress += scalingSpeed;
-          const newScale = startScale + scaleDiff * progress;
+    function resetModels() {
+      objects.forEach((model) => {
+        // animateScalingAndOpacity(model, smallModelScale, 0.3);
+        animateScaling(model, standartModelScale);
+      });
+      isModelScaled = false;
+    }
 
-          model.scale.set(newScale, newScale, newScale);
-
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          } else if (onComplete) {
-            onComplete();  // Выполняем коллбек после завершения анимации
-          }
-        }
-
-        requestAnimationFrame(animate);
-      }
-
-      function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null)
-      {
-        const startScale = model.scale.x;
-        const startOpacity = model.material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
-        const scaleDiff = targetScale - startScale;
-        const opacityDiff = targetOpacity - startOpacity;
-        let progress = 0;
-
-        function animate() {
-          progress += scalingSpeed;
-          const newScale = startScale + scaleDiff * progress;
-          const newOpacity = startOpacity + opacityDiff * progress;
-
-          model.scale.set(newScale, newScale, newScale);
-
-          // Устанавливаем прозрачность для всех дочерних материалов
-          model.traverse((child) => {
-            if (child.isMesh && child.material) {
-              child.material.transparent = true;
-              child.material.opacity = newOpacity;
-            }
-          });
-
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          } else if (onComplete) {
-            onComplete();  // Выполняем коллбек после завершения анимации
-          }
-        }
-
-        requestAnimationFrame(animate);
-      }
+    function animateScaling(model, targetScale, onComplete = null) {
+      const startScale = model.scale.x;
+      const scaleDiff = targetScale - startScale;
+      let progress = 0;
 
       function animate() {
-        renderer.setAnimationLoop(render);
+        progress += scalingSpeed;
+        const newScale = startScale + scaleDiff * progress;
+
+        model.scale.set(newScale, newScale, newScale);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else if (onComplete) {
+          onComplete();  // Выполняем коллбек после завершения анимации
+        }
       }
 
-      function render() {
-        renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    function animateScalingAndOpacity(model, targetScale, targetOpacity, onComplete = null) {
+      const startScale = model.scale.x;
+      const startOpacity = model.material.opacity;  // Предполагается, что модель имеет материал с прозрачностью
+      const scaleDiff = targetScale - startScale;
+      const opacityDiff = targetOpacity - startOpacity;
+      let progress = 0;
+
+      function animate() {
+        progress += scalingSpeed;
+        const newScale = startScale + scaleDiff * progress;
+        const newOpacity = startOpacity + opacityDiff * progress;
+
+        model.scale.set(newScale, newScale, newScale);
+
+        // Устанавливаем прозрачность для всех дочерних материалов
+        model.traverse((child) => {
+          if (child.isMesh && child.material) {
+            child.material.transparent = true;
+            child.material.opacity = newOpacity;
+          }
+        });
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else if (onComplete) {
+          onComplete();  // Выполняем коллбек после завершения анимации
+        }
       }
-    </script>
-  </body>
+
+      requestAnimationFrame(animate);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      // camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      renderer.setAnimationLoop(render);
+    }
+
+    function render() {
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+
 </html>
