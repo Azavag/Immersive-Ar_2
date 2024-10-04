@@ -134,7 +134,7 @@
       const intersects = raycaster.intersectObjects(objects, true);
 
       if (intersects.length > 0) {
-        const clickedModel = intersects[0].object;
+        let clickedModel = intersects[0].object;
 
       // Поднимаемся вверх по иерархии, чтобы получить корневую модель
       while (clickedModel.parent && !objects.includes(clickedModel)) {
