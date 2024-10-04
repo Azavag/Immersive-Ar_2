@@ -135,6 +135,11 @@
 
       if (intersects.length > 0) {
         const clickedModel = intersects[0].object;
+
+      // Поднимаемся вверх по иерархии, чтобы получить корневую модель
+      while (clickedModel.parent && !objects.includes(clickedModel)) {
+        clickedModel = clickedModel.parent;
+      }
         console.log(clickedModel);
         if (!isModelScaled) {
           animateScaling(clickedModel, bigModelScale);
@@ -176,7 +181,6 @@
         const newScale = startScale + scaleDiff * progress;
 
         model.scale.set(newScale, newScale, newScale);
-        console.log(model.scale);
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else if (onComplete) {
