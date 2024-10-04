@@ -174,7 +174,7 @@
     function animateScaling(model, targetScale, onComplete = null) {      
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
-      let scalingSpeed = scaleDiff / scalingTime;
+      let scalingSpeed = Math.abs(scaleDiff / scalingTime);
       console.log("scalingSpeed" + scalingSpeed);
       let progress = 0;
 
