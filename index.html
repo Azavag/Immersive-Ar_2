@@ -75,9 +75,9 @@
       const geometry = new THREE.BoxGeometry(4, 0.05, 2);
       const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
       floor = new THREE.Mesh(geometry, material);
-      floor.position.set(0,-0.1, -1);
+      floor.position.set(0, -0.1, -1);
       scene.add(floor);
-    
+
 
       //Загрузка первой модели
       loader.load('models/building1.glb', function (gltf) {
@@ -114,11 +114,11 @@
         objects.push(model4);
       });
 
-       // Загрузка 5 модели
-       loader.load('models/school_building.glb', function (gltf) {
+      // Загрузка 5 модели
+      loader.load('models/school_building.glb', function (gltf) {
         model5 = gltf.scene;
         model5.position.set(-1, 0, -1);  // Позиционируем вторую модель
-        model5.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+        model5.scale.set(standartModelScale * 5, standartModelScale * 5, standartModelScale * 5);  // Устанавливаем начальный размер
         scene.add(model5);
         objects.push(model5);
       });
@@ -154,11 +154,10 @@
         }
         console.log(clickedModel);
         if (!isModelScaled) {
-          animateScaling(clickedModel, bigModelScale);
+          animateScaling(clickedModel, 2);    //Увеличить выбранную модель
           objects.forEach((model) => {
             if (model !== clickedModel) {
-              animateScaling(model, smallModelScale);
-              // animateScalingAndOpacity(model, smallModelScale, 0.3);
+              animateScaling(model, 0.5);     //Остальные модели уменьшить
             }
           });
           isModelScaled = true;
@@ -177,20 +176,20 @@
     function resetModels() {
       if (isModelScaled) {
         objects.forEach((model) => {
-          // animateScalingAndOpacity(model, smallModelScale, 0.3);
-          animateScaling(model, standartModelScale);
+          animateScaling(model, 2);
         });
         isModelScaled = false;
       }
     }
 
-    function animateScaling(model, targetScale, onComplete = null) {
+    function animateScaling(model, multiply, onComplete = null) {
       animationInProgress = true;
       const startScale = model.scale.x;
+      const targetScale = startScale * multiply;
       const scaleDiff = targetScale - startScale;
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
       let progress = 0;
-      //СДЕЛАТЬ ПРОВЕРКУ НА ПРОЦЕСС АНИМАЦИЮ
+      //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
       function animate() {
         progress += scalingSpeed;
 
@@ -215,43 +214,8 @@
     }
 
     function render() {
-        renderer.render(scene, camera);
-      }
-
-    // function render(timestamp, frame) {
-    //   if (frame) {
-    //     const referenceSpace = renderer.xr.getReferenceSpace();
-    //     const session = renderer.xr.getSession();
-
-    //     if (hitTestSourceRequested === false) {
-    //       session.requestReferenceSpace('viewer').then(function (referenceSpace) {
-    //         session.requestHitTestSource({ space: referenceSpace }).then(function (source) {
-    //           hitTestSource = source;
-    //         });
-    //       });
-
-    //       session.addEventListener('end', function () {
-    //         hitTestSourceRequested = false;
-    //         hitTestSource = null;
-    //       });
-
-    //       hitTestSourceRequested = true;
-    //     }
-
-    //     if (hitTestSource) {
-    //       const hitTestResults = frame.getHitTestResults(hitTestSource);
-
-    //       if (hitTestResults.length > 0) {
-    //         const hit = hitTestResults[0];
-    //         const pose = hit.getPose(referenceSpace);
-
-    //         // Устанавливаем модель в позицию, где плоскость найдена
-    //         scene.position.setFromMatrixPosition(pose.transform.matrix);
-    //         scene.visible = true;
-    //       }
-    //     }
-    //   }
-    // }
+      renderer.render(scene, camera);
+    }
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
