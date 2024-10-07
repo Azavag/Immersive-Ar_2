@@ -72,7 +72,7 @@
       const loader = new THREE.GLTFLoader();
 
       // Добавление пола
-      const geometry = new THREE.BoxGeometry(2, 0.05, 1);
+      const geometry = new THREE.BoxGeometry(4, 0.05, 2);
       const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
       floor = new THREE.Mesh(geometry, material);
       floor.position.set(0,-0.1, -1);
@@ -117,7 +117,7 @@
        // Загрузка 5 модели
        loader.load('models/building2.glb', function (gltf) {
         model5 = gltf.scene;
-        model5.position.set(-2, 0, -2);  // Позиционируем вторую модель
+        model5.position.set(-1, 0, -1);  // Позиционируем вторую модель
         model5.scale.set(standartModelScale * 2, standartModelScale * 2, standartModelScale * 2);  // Устанавливаем начальный размер
         scene.add(model5);
         objects.push(model5);
