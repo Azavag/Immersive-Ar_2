@@ -198,44 +198,44 @@
       requestAnimationFrame(animate);
     }
 
-    // function render() {
-    //     renderer.render(scene, camera);
-    //   }
-
-    function render(timestamp, frame) {
-      if (frame) {
-        const referenceSpace = renderer.xr.getReferenceSpace();
-        const session = renderer.xr.getSession();
-
-        if (hitTestSourceRequested === false) {
-          session.requestReferenceSpace('viewer').then(function (referenceSpace) {
-            session.requestHitTestSource({ space: referenceSpace }).then(function (source) {
-              hitTestSource = source;
-            });
-          });
-
-          session.addEventListener('end', function () {
-            hitTestSourceRequested = false;
-            hitTestSource = null;
-          });
-
-          hitTestSourceRequested = true;
-        }
-
-        if (hitTestSource) {
-          const hitTestResults = frame.getHitTestResults(hitTestSource);
-
-          if (hitTestResults.length > 0) {
-            const hit = hitTestResults[0];
-            const pose = hit.getPose(referenceSpace);
-
-            // Устанавливаем модель в позицию, где плоскость найдена
-            scene.position.setFromMatrixPosition(pose.transform.matrix);
-            scene.visible = true;
-          }
-        }
+    function render() {
+        renderer.render(scene, camera);
       }
-    }
+
+    // function render(timestamp, frame) {
+    //   if (frame) {
+    //     const referenceSpace = renderer.xr.getReferenceSpace();
+    //     const session = renderer.xr.getSession();
+
+    //     if (hitTestSourceRequested === false) {
+    //       session.requestReferenceSpace('viewer').then(function (referenceSpace) {
+    //         session.requestHitTestSource({ space: referenceSpace }).then(function (source) {
+    //           hitTestSource = source;
+    //         });
+    //       });
+
+    //       session.addEventListener('end', function () {
+    //         hitTestSourceRequested = false;
+    //         hitTestSource = null;
+    //       });
+
+    //       hitTestSourceRequested = true;
+    //     }
+
+    //     if (hitTestSource) {
+    //       const hitTestResults = frame.getHitTestResults(hitTestSource);
+
+    //       if (hitTestResults.length > 0) {
+    //         const hit = hitTestResults[0];
+    //         const pose = hit.getPose(referenceSpace);
+
+    //         // Устанавливаем модель в позицию, где плоскость найдена
+    //         scene.position.setFromMatrixPosition(pose.transform.matrix);
+    //         scene.visible = true;
+    //       }
+    //     }
+    //   }
+    // }
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -246,7 +246,6 @@
     function animate() {
       renderer.setAnimationLoop(render);
     }
-    renderer.render(scene, camera);
   </script>
 </body>
 
