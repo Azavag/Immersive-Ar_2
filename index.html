@@ -180,7 +180,7 @@
     function resetModels() {
       if (isModelScaled) {
         objects.forEach((model) => {
-          const index = objects.findIndex(model);
+          const index = objects.findIndex((obj) => obj === model);
           animateScaling(model, scaleArray[index]);
         });
         isModelScaled = false;
