@@ -88,6 +88,7 @@
         model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
         model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model1);
+        initialScales.set(model1, model1.scale.clone());
         objects.push(model1);
       });
 
@@ -97,6 +98,7 @@
         model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
         model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model2);
+        initialScales.set(model2, model2.scale.clone());
         objects.push(model2);
       });
       // Загрузка третьей модели
@@ -105,6 +107,7 @@
         model3.position.set(0, 0, -0.5);  // Позиционируем вторую модель
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model3);
+        initialScales.set(model3, model3.scale.clone());
         objects.push(model3);
       });
 
@@ -114,6 +117,7 @@
         model4.position.set(1, 0, -1.3);  // Позиционируем вторую модель
         model4.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model4);
+        initialScales.set(model4, model4.scale.clone());
         objects.push(model4);
       });
 
@@ -124,14 +128,13 @@
         model5.scale.set(standartModelScale * 7, standartModelScale * 7, standartModelScale * 7);  // Устанавливаем начальный размер
         model5.rotation.y = 3 * Math.PI / 4;  // 45 градусов в радианах
         scene.add(model5);
+        initialScales.set(model5, model5.scale.clone());
         objects.push(model5);
       });
 
       console.log(objects);
       // Когда загружаются модели, сохраняем их начальные масштабы
-      objects.forEach((model) => {
-        initialScales.set(model, model.scale.clone());  // Клонируем масштаб, чтобы не было ссылки
-      });
+   
       console.log(initialScales);
 
       // Изменение размеров окна
