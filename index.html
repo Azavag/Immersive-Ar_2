@@ -96,13 +96,31 @@
         scene.add(model2);
         objects.push(model2);
       });
-      // Загрузка второй модели
+      // Загрузка третьей модели
       loader.load('models/building1.glb', function (gltf) {
         model3 = gltf.scene;
         model3.position.set(0, 0, -0.5);  // Позиционируем вторую модель
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model3);
         objects.push(model3);
+      });
+
+      // Загрузка 4 модели
+      loader.load('models/building2.glb', function (gltf) {
+        model4 = gltf.scene;
+        model4.position.set(1, 0, -1.3);  // Позиционируем вторую модель
+        model4.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
+        scene.add(model4);
+        objects.push(model4);
+      });
+
+       // Загрузка 5 модели
+       loader.load('models/building2.glb', function (gltf) {
+        model5 = gltf.scene;
+        model5.position.set(-2, 0, -2);  // Позиционируем вторую модель
+        model5.scale.set(standartModelScale * 2, standartModelScale * 2, standartModelScale * 2);  // Устанавливаем начальный размер
+        scene.add(model5);
+        objects.push(model5);
       });
 
       console.log(objects);
@@ -171,7 +189,6 @@
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
-      console.log("scalingSpeed" + scalingSpeed);
       let progress = 0;
       //СДЕЛАТЬ ПРОВЕРКУ НА ПРОЦЕСС АНИМАЦИЮ
       function animate() {
@@ -180,7 +197,6 @@
         if (progress > 1) {
           progress = 1; // Завершаем анимацию, если прогресс превышает 1
         }
-        console.log("progress" + progress);
         const newScale = startScale + scaleDiff * progress;
         model.scale.set(newScale, newScale, newScale);
 
