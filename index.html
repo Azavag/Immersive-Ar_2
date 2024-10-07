@@ -30,7 +30,9 @@
     let smallMultiply = 0.5;
     let animationInProgress = false;
     const objects = [];
-    let scaleArray = [];
+    const initialScales = new Map();
+
+
 
     let hitTestSource = null;
     let hitTestSourceRequested = false;
@@ -131,7 +133,11 @@
       });
 
       console.log(objects);
-      console.log(scaleArray);
+      // Когда загружаются модели, сохраняем их начальные масштабы
+      objects.forEach((model) => {
+        initialScales.set(model, model.scale.clone());  // Клонируем масштаб, чтобы не было ссылки
+      });
+      console.log(initialScales);
 
       // Изменение размеров окна
       window.addEventListener('resize', onWindowResize, false);
@@ -181,8 +187,10 @@
     function resetModels() {
       if (isModelScaled) {
         objects.forEach((model) => {
-          const index = objects.findIndex((obj) => obj === model);
-          animateScaling(model, scaleArray[index]);
+          const initialScale = initialScales.get(model);
+          if (initialScale) {
+            animateScaling(model, initialScale.x);
+          }
         });
         isModelScaled = false;
       }
@@ -192,7 +200,7 @@
       animationInProgress = true;
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
-      console.log(model + " " + startScale + " " + targetScale);
+      console.log(model.name + " " + startScale + " " + targetScale);
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
       let progress = 0;
       //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
