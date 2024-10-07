@@ -30,6 +30,7 @@
     let bigModelScale = 0.04;
     let animationInProgress = false;
     const objects = [];
+    let scaleArray = [];
 
     let hitTestSource = null;
     let hitTestSourceRequested = false;
@@ -86,6 +87,7 @@
         model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model1);
         objects.push(model1);
+        scaleArray[0] = model1.scale.x;
       });
 
       // Загрузка второй модели
@@ -95,6 +97,7 @@
         model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model2);
         objects.push(model2);
+        scaleArray[1] = model2.scale.x;
       });
       // Загрузка третьей модели
       loader.load('models/building1.glb', function (gltf) {
@@ -103,6 +106,7 @@
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model3);
         objects.push(model3);
+        scaleArray[2] = model3.scale.x;
       });
 
       // Загрузка 4 модели
@@ -112,21 +116,22 @@
         model4.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model4);
         objects.push(model4);
+        scaleArray[3] = model4.scale.x;
       });
 
       // Загрузка 5 модели
       loader.load('models/school_building.glb', function (gltf) {
         model5 = gltf.scene;
         model5.position.set(-1, 0, -1);  // Позиционируем вторую модель
-        model5.scale.set(standartModelScale * 5, standartModelScale * 5, standartModelScale * 5);  // Устанавливаем начальный размер
+        model5.scale.set(standartModelScale * 7, standartModelScale * 7, standartModelScale * 7);  // Устанавливаем начальный размер
         scene.add(model5);
         objects.push(model5);
+        scaleArray[4] = model5.scale.x;
       });
 
       console.log(objects);
-      // scene.visible = false;
-
-
+      console.log(scaleArray);
+      
       // Изменение размеров окна
       window.addEventListener('resize', onWindowResize, false);
 
@@ -172,11 +177,11 @@
     }
 
 
-
     function resetModels() {
       if (isModelScaled) {
         objects.forEach((model) => {
-          animateScaling(model, 2);
+          const index = objects.find(model);
+          animateScaling(model, scaleArray[index]);
         });
         isModelScaled = false;
       }
