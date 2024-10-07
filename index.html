@@ -115,10 +115,10 @@
       });
 
        // Загрузка 5 модели
-       loader.load('models/building2.glb', function (gltf) {
+       loader.load('models/school_building.glb', function (gltf) {
         model5 = gltf.scene;
         model5.position.set(-1, 0, -1);  // Позиционируем вторую модель
-        model5.scale.set(standartModelScale * 2, standartModelScale * 2, standartModelScale * 2);  // Устанавливаем начальный размер
+        model5.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model5);
         objects.push(model5);
       });
