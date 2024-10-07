@@ -157,9 +157,9 @@
         while (clickedModel.parent && !objects.includes(clickedModel)) {
           clickedModel = clickedModel.parent;
         }
-        console.log(clickedModel);
         if (!isModelScaled) {
           animateScaling(clickedModel, clickedModel.scale.x * bigMutiply);    //Увеличить выбранную модель
+
           objects.forEach((model) => {
             if (model !== clickedModel) {
               animateScaling(model, model.scale.x * smallMultiply);     //Остальные модели уменьшить
@@ -181,7 +181,6 @@
       if (isModelScaled) {
         objects.forEach((model) => {
           const index = objects.findIndex((obj) => obj === model);
-          console.log(index);
           animateScaling(model, scaleArray[index]);
         });
         isModelScaled = false;
@@ -192,6 +191,7 @@
       animationInProgress = true;
       const startScale = model.scale.x;
       const scaleDiff = targetScale - startScale;
+      console.log(model + " " + startScale + " " + targetScale);
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
       let progress = 0;
       //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
