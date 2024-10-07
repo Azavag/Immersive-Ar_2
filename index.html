@@ -124,6 +124,7 @@
         model5 = gltf.scene;
         model5.position.set(-1, 0, -1);  // Позиционируем вторую модель
         model5.scale.set(standartModelScale * 7, standartModelScale * 7, standartModelScale * 7);  // Устанавливаем начальный размер
+        model5.rotation.y = 3 * Math.PI / 4;  // 45 градусов в радианах
         scene.add(model5);
         objects.push(model5);
         scaleArray[4] = model5.scale.x;
