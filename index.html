@@ -181,6 +181,7 @@
       if (isModelScaled) {
         objects.forEach((model) => {
           const index = objects.findIndex((obj) => obj === model);
+          console.log(index);
           animateScaling(model, scaleArray[index]);
         });
         isModelScaled = false;
