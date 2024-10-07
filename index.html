@@ -89,7 +89,6 @@
         model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model1);
         objects.push(model1);
-        scaleArray[0] = model1.scale.x;
       });
 
       // Загрузка второй модели
@@ -99,7 +98,6 @@
         model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model2);
         objects.push(model2);
-        scaleArray[1] = model2.scale.x;
       });
       // Загрузка третьей модели
       loader.load('models/building1.glb', function (gltf) {
@@ -108,7 +106,6 @@
         model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model3);
         objects.push(model3);
-        scaleArray[2] = model3.scale.x;
       });
 
       // Загрузка 4 модели
@@ -118,7 +115,6 @@
         model4.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
         scene.add(model4);
         objects.push(model4);
-        scaleArray[3] = model4.scale.x;
       });
 
       // Загрузка 5 модели
@@ -129,7 +125,6 @@
         model5.rotation.y = 3 * Math.PI / 4;  // 45 градусов в радианах
         scene.add(model5);
         objects.push(model5);
-        scaleArray[4] = model5.scale.x;
       });
 
       console.log(objects);
