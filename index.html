@@ -131,7 +131,7 @@
 
       console.log(objects);
       console.log(scaleArray);
-      
+
       // Изменение размеров окна
       window.addEventListener('resize', onWindowResize, false);
 
@@ -180,7 +180,7 @@
     function resetModels() {
       if (isModelScaled) {
         objects.forEach((model) => {
-          const index = objects.find(model);
+          const index = objects.findIndex(model);
           animateScaling(model, scaleArray[index]);
         });
         isModelScaled = false;
