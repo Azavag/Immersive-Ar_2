@@ -24,10 +24,10 @@
     let isModel1Scaled = false;
     let isModel2Scaled = false;
     let isModelScaled = false;
-    let scalingTime = 1.2;  // Время анимации
+    let scalingTime = 0.5;  // Время анимации
     let standartModelScale = 0.03;
-    let smallModelScale = 0.015;
-    let bigModelScale = 0.05;
+    let smallModelScale = 0.02;
+    let bigModelScale = 0.04;
     let animationInProgress = false;
     const objects = [];
 
@@ -72,7 +72,7 @@
       const loader = new THREE.GLTFLoader();
 
       // Добавление пола
-      const geometry = new THREE.BoxGeometry(1, 0.1, 1);
+      const geometry = new THREE.BoxGeometry(2, 0.05, 1);
       const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
       floor = new THREE.Mesh(geometry, material);
       floor.position.set(0,-0.1, -1);
