@@ -26,8 +26,8 @@
     let isModelScaled = false;
     let scalingTime = 0.5;  // Время анимации
     let standartModelScale = 0.03;
-    let smallModelScale = 0.02;
-    let bigModelScale = 0.04;
+    let bigMutiply = 2;
+    let smallMultiply = 0.5;
     let animationInProgress = false;
     const objects = [];
     let scaleArray = [];
@@ -159,10 +159,10 @@
         }
         console.log(clickedModel);
         if (!isModelScaled) {
-          animateScaling(clickedModel, 2);    //Увеличить выбранную модель
+          animateScaling(clickedModel, model.scale.x * bigMutiply);    //Увеличить выбранную модель
           objects.forEach((model) => {
             if (model !== clickedModel) {
-              animateScaling(model, 0.5);     //Остальные модели уменьшить
+              animateScaling(model, model.scale.x * smallMultiply);     //Остальные модели уменьшить
             }
           });
           isModelScaled = true;
@@ -187,10 +187,9 @@
       }
     }
 
-    function animateScaling(model, multiply, onComplete = null) {
+    function animateScaling(model, targetScale, onComplete = null) {
       animationInProgress = true;
       const startScale = model.scale.x;
-      const targetScale = startScale * multiply;
       const scaleDiff = targetScale - startScale;
       let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
       let progress = 0;
