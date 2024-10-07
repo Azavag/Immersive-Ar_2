@@ -159,7 +159,7 @@
         }
         console.log(clickedModel);
         if (!isModelScaled) {
-          animateScaling(clickedModel, model.scale.x * bigMutiply);    //Увеличить выбранную модель
+          animateScaling(clickedModel, clickedModel.scale.x * bigMutiply);    //Увеличить выбранную модель
           objects.forEach((model) => {
             if (model !== clickedModel) {
               animateScaling(model, model.scale.x * smallMultiply);     //Остальные модели уменьшить
