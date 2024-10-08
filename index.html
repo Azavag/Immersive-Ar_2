@@ -25,8 +25,20 @@
         let stopHitTest = false; // Флаг для остановки хит-теста
 
         let model1, model2, model3, model4, model5, floor;
+        let raycaster = new THREE.Raycaster();
+        let pointer = new THREE.Vector2();
 
-        const scene = new THREE.Scene();
+        let isModelScaled = false;
+        let scalingTime = 0.5;  // Время анимации
+        let standartModelScale = 0.03;
+        let bigMutiply = 2;
+        let smallMultiply = 0.5;
+        let animationInProgress = false;
+        const objects = [];
+        const initialScales = new Map();
+
+
+        let scene = new THREE.Scene();
 
         const sizes = {
             width: window.innerWidth,
