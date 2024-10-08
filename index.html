@@ -18,6 +18,7 @@
   let isSceneFixed = false;
   let raycaster, pointer, buttonMesh;
   const objects = [];
+  const initialDistanceFromCamera = 2;  // Задаём изначальное расстояние от камеры до объекта
 
   init();
 
@@ -48,6 +49,7 @@
     const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(0, 0, -initialDistanceFromCamera);  // Расположить куб перед камерой на определённом расстоянии
     scene.add(cube);
     objects.push(cube);
 
@@ -64,7 +66,7 @@
         if (viewerPose) {
           const viewMatrix = viewerPose.views[0].transform.matrix;
 
-          // Обновляем положение сцены
+          // Обновляем положение только сцены (без куба)
           scene.position.setFromMatrixPosition(new THREE.Matrix4().fromArray(viewMatrix));
           scene.rotation.setFromRotationMatrix(new THREE.Matrix4().fromArray(viewMatrix));
         }
