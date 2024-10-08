@@ -3,15 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Scene Placement</title>
+  <title>AR Scene Placement with Button</title>
   <style>
     body { margin: 0; overflow: hidden; }
-    #arButton {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1;
-    }
   </style>
 </head>
 <body>
@@ -20,17 +14,18 @@
   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.module.js';
   import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
 
-  let scene, camera, renderer, controller, reticle;
-  let placed = false;  // Флаг для проверки, установлена ли сцена
+  let scene, camera, renderer, controller;
+  let isSceneFixed = false;
+  let raycaster, pointer, buttonMesh;
+  const objects = [];
 
-  // Инициализация сцены
   init();
 
   function init() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
-    
+
     // Рендерер с поддержкой WebXR
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -38,65 +33,99 @@
     renderer.xr.enabled = true;
     document.body.appendChild(renderer.domElement);
 
-    // Добавляем ARButton для включения AR режима
+    // ARButton для активации AR режима
     document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
 
     // Контроллер для работы с AR
     controller = renderer.xr.getController(0);
     scene.add(controller);
 
-    // Настраиваем raycasting для поиска поверхности
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
-    const intersectedObjects = [];
+    // Raycaster для отслеживания кликов
+    raycaster = new THREE.Raycaster();
+    pointer = new THREE.Vector2();
 
-    // Ретикл для индикации поверхности
-    const reticleGeometry = new THREE.RingGeometry(0.1, 0.15, 32).rotateX(-Math.PI / 2);
-    const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
-    reticle.matrixAutoUpdate = false;
-    reticle.visible = false;
-    scene.add(reticle);
-
-    // Добавление куба для теста
+    // Добавляем объекты на сцену
     const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
-    cube.visible = false; // Он должен появляться только после нахождения поверхности
     scene.add(cube);
+    objects.push(cube);
 
-    // Отслеживаем frame, чтобы рендерить сцену и обрабатывать AR
+    // Добавляем 3D кнопку с текстом
+    create3DButton();
+
+    // Обновляем положение сцены в зависимости от движения камеры
     renderer.setAnimationLoop((timestamp, frame) => {
-      if (frame) {
+      if (frame && !isSceneFixed) {
         const session = renderer.xr.getSession();
-        const viewerSpace = session.viewerSpace;
         const referenceSpace = renderer.xr.getReferenceSpace();
+        const viewerPose = frame.getViewerPose(referenceSpace);
 
-        // Проверка Hit Test API на распознавание плоскости
-        const hitTestSource = session.requestHitTestSource({ space: viewerSpace });
+        if (viewerPose) {
+          const viewMatrix = viewerPose.views[0].transform.matrix;
 
-        if (hitTestSource) {
-          const hitTestResults = frame.getHitTestResults(hitTestSource);
-          if (hitTestResults.length > 0 && !placed) {
-            const hit = hitTestResults[0];
-            const pose = hit.getPose(referenceSpace);
-
-            reticle.visible = true;
-            reticle.matrix.fromArray(pose.transform.matrix);
-
-            // Если пользователь нажимает, то помещаем объект на плоскость
-            controller.addEventListener('select', () => {
-              cube.position.setFromMatrixPosition(reticle.matrix);
-              cube.visible = true;
-              placed = true; // Устанавливаем флаг, чтобы предотвратить повторное размещение
-            });
-          } else {
-            reticle.visible = false;
-          }
+          // Обновляем положение сцены
+          scene.position.setFromMatrixPosition(new THREE.Matrix4().fromArray(viewMatrix));
+          scene.rotation.setFromRotationMatrix(new THREE.Matrix4().fromArray(viewMatrix));
         }
       }
+
       renderer.render(scene, camera);
     });
+
+    // Добавляем обработчик кликов
+    window.addEventListener('pointerdown', onPointerDown);
+  }
+
+  // Создание 3D-кнопки с текстурой текста
+  function create3DButton() {
+    const buttonGeometry = new THREE.PlaneGeometry(0.5, 0.2);  // Размер кнопки
+
+    // Создание текстуры на основе канваса
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 128;
+
+    // Задаём стиль для текста
+    context.fillStyle = '#0000ff';  // Синий фон
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.font = '30px Arial';
+    context.fillStyle = '#ffffff';  // Белый текст
+    context.fillText('Fix Scene', 70, 80);  // Текст в центре
+
+    // Создаём текстуру из канваса
+    const texture = new THREE.CanvasTexture(canvas);
+    const buttonMaterial = new THREE.MeshBasicMaterial({ map: texture });
+
+    buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+
+    // Позиционирование кнопки внизу экрана
+    buttonMesh.position.set(0, -0.4, -1);  // Под камерой
+    scene.add(buttonMesh);
+
+    objects.push(buttonMesh);  // Добавляем кнопку в массив объектов для отслеживания кликов
+  }
+
+  // Обработка кликов по объектам
+  function onPointerDown(event) {
+    pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
+
+    raycaster.setFromCamera(pointer, camera);
+
+    const intersects = raycaster.intersectObjects(objects, true);
+    if (intersects.length > 0) {
+      const clickedObject = intersects[0].object;
+
+      // Проверка, что кликнули на кнопку
+      if (clickedObject === buttonMesh) {
+        console.log('Кнопка нажата! Фиксируем сцену.');
+        isSceneFixed = true;  // Фиксируем сцену
+        buttonMesh.visible = false;  // Скрываем кнопку после нажатия
+      } else {
+        console.log('Клик по объекту:', clickedObject);
+      }
+    }
   }
 </script>
 
