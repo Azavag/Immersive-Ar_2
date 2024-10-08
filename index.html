@@ -34,7 +34,7 @@
         // Reticle (указатель) для обнаружения поверхности
         let reticle = new THREE.Mesh(
             new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
-            new THREE.MeshStandardMaterial({ color: 0xffffff * Math.random() })
+            new THREE.MeshStandardMaterial({ color: 0x00ff00 })
         );
         reticle.visible = false;
         reticle.matrixAutoUpdate = false;
@@ -57,7 +57,7 @@
         document.body.appendChild(renderer.domElement);
         document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
 
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
         const material = new THREE.MeshStandardMaterial({ color: 0xffffff * Math.random() });
 
         let controller = renderer.xr.getController(0);
