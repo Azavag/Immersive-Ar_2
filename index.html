@@ -1,104 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Scene Placement</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    #arButton {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Scene Placement</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #arButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+    </style>
 </head>
+
 <body>
 
-<script type="module">
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.module.js';
-  import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.module.js';
+        import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
 
-  let scene, camera, renderer, controller, reticle;
-  let placed = false;  // Флаг для проверки, установлена ли сцена
+        let scene, camera, renderer, controller, reticle;
+        let placed = false;  // Флаг для проверки, установлена ли сцена
 
-  // Инициализация сцены
-  init();
+        // Инициализация сцены
+        init();
 
-  function init() {
-    scene = new THREE.Scene();
+        function init() {
+            scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
-    
-    // Рендерер с поддержкой WebXR
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.xr.enabled = true;
-    document.body.appendChild(renderer.domElement);
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
-    // Добавляем ARButton для включения AR режима
-    document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
+            // Рендерер с поддержкой WebXR
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.xr.enabled = true;
+            document.body.appendChild(renderer.domElement);
 
-    // Контроллер для работы с AR
-    controller = renderer.xr.getController(0);
-    scene.add(controller);
+            // Добавляем ARButton для включения AR режима
+            document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
 
-    // Настраиваем raycasting для поиска поверхности
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
-    const intersectedObjects = [];
+            // Контроллер для работы с AR
+            controller = renderer.xr.getController(0);
+            scene.add(controller);
 
-    // Ретикл для индикации поверхности
-    const reticleGeometry = new THREE.RingGeometry(0.1, 0.15, 32).rotateX(-Math.PI / 2);
-    const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
-    reticle.matrixAutoUpdate = false;
-    reticle.visible = false;
-    scene.add(reticle);
+            // Добавляем свет в сцену
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1).normalize();
+            scene.add(directionalLight);
 
-    // Добавление куба для теста
-    const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    cube.visible = false; // Он должен появляться только после нахождения поверхности
-    scene.add(cube);
+            // Настраиваем raycasting для поиска поверхности
+            const raycaster = new THREE.Raycaster();
+            const pointer = new THREE.Vector2();
+            const intersectedObjects = [];
 
-    // Отслеживаем frame, чтобы рендерить сцену и обрабатывать AR
-    renderer.setAnimationLoop((timestamp, frame) => {
-      if (frame) {
-        const session = renderer.xr.getSession();
-        const viewerSpace = session.viewerSpace;
-        const referenceSpace = renderer.xr.getReferenceSpace();
-
-        // Проверка Hit Test API на распознавание плоскости
-        const hitTestSource = session.requestHitTestSource({ space: viewerSpace });
-
-        if (hitTestSource) {
-          const hitTestResults = frame.getHitTestResults(hitTestSource);
-          if (hitTestResults.length > 0 && !placed) {
-            const hit = hitTestResults[0];
-            const pose = hit.getPose(referenceSpace);
-
-            reticle.visible = true;
-            reticle.matrix.fromArray(pose.transform.matrix);
-
-            // Если пользователь нажимает, то помещаем объект на плоскость
-            controller.addEventListener('select', () => {
-              cube.position.setFromMatrixPosition(reticle.matrix);
-              cube.visible = true;
-              placed = true; // Устанавливаем флаг, чтобы предотвратить повторное размещение
-            });
-          } else {
+            // Ретикл для индикации поверхности
+            const reticleGeometry = new THREE.RingGeometry(0.1, 0.15, 32).rotateX(-Math.PI / 2);
+            const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+            reticle.matrixAutoUpdate = false;
             reticle.visible = false;
-          }
+            scene.add(reticle);
+
+            // Добавление куба для теста
+            const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const cube = new THREE.Mesh(geometry, material);
+            cube.visible = false; // Он должен появляться только после нахождения поверхности
+            scene.add(cube);
+
+            // Отслеживаем frame, чтобы рендерить сцену и обрабатывать AR
+            renderer.setAnimationLoop((timestamp, frame) => {
+                if (frame) {
+                    const session = renderer.xr.getSession();
+                    const viewerSpace = session.viewerSpace;
+                    const referenceSpace = renderer.xr.getReferenceSpace();
+
+                    // Проверка Hit Test API на распознавание плоскости
+                    const hitTestSource = session.requestHitTestSource({ space: viewerSpace });
+
+                    if (hitTestSource) {
+                        const hitTestResults = frame.getHitTestResults(hitTestSource);
+                        if (hitTestResults.length > 0 && !placed) {
+                            const hit = hitTestResults[0];
+                            const pose = hit.getPose(referenceSpace);
+
+                            reticle.visible = true;
+                            reticle.matrix.fromArray(pose.transform.matrix);
+
+                            // Если пользователь нажимает, то помещаем объект на плоскость
+                            controller.addEventListener('select', () => {
+                                cube.position.setFromMatrixPosition(reticle.matrix);
+                                cube.visible = true;
+                                placed = true; // Устанавливаем флаг, чтобы предотвратить повторное размещение
+                            });
+                        } else {
+                            reticle.visible = false;
+                        }
+                    }
+                }
+                renderer.render(scene, camera);
+            });
         }
-      }
-      renderer.render(scene, camera);
-    });
-  }
-</script>
+    </script>
 
 </body>
+
 </html>
