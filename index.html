@@ -15,9 +15,7 @@
 </head>
 
 <body>
-
     <script type="module">
-        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.module.js';
         import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
 
         let hitTestSource = null;
@@ -101,19 +99,29 @@
                     const hitTestResults = frame.getHitTestResults(hitTestSource);
                     if (hitTestResults.length > 0) {
                         const hit = hitTestResults[0];
-                        reticle.visible = true;
-                        reticle.matrix.fromArray(hit.getPose(referenceSpace).transform.matrix);
+
+                        // Проверяем нормаль поверхности на горизонтальность
+                        const hitMatrix = hit.getPose(referenceSpace).transform.matrix;
+                        const normal = new THREE.Vector3(hitMatrix[4], hitMatrix[5], hitMatrix[6]); // Это нормаль
+
+                        const up = new THREE.Vector3(0, 1, 0); // Вектор Y
+                        const dotProduct = normal.dot(up); // Скалярное произведение нормали и вектора Y
+
+                        const angle = Math.acos(dotProduct); // Угол между нормалью и Y
+
+                        const threshold = Math.PI / 6; // Пороговое значение угла (30 градусов)
+
+                        if (Math.abs(angle) < threshold) {
+                            reticle.visible = true;
+                            reticle.matrix.fromArray(hit.getPose(referenceSpace).transform.matrix);
+                        } else {
+                            reticle.visible = false; // Если поверхность не горизонтальная, скрываем указатель
+                        }
                     } else {
                         reticle.visible = false;
                     }
                 }
             }
-
-            scene.children.forEach((object) => {
-                if (object.name === "cube") {
-                    object.rotation.y += 0.01;
-                }
-            });
 
             renderer.render(scene, camera);
         }
