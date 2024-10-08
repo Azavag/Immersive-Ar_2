@@ -5,6 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AR Clickable Cubes</title>
+  <style>
+      body {
+          margin: 0;
+          overflow: hidden;
+      }
+  </style>
   <!-- Подключаем Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
   <!-- Подключаем GLTFLoader -->
@@ -38,7 +44,6 @@
     let stopHitTest = false; // Флаг для остановки хит-теста
 
     init();
-    render();
     animate();
 
     function init() {
@@ -49,7 +54,7 @@
       // Устанавливаем позицию камеры сверху
       camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 2, 5); // Поднимаем камеру на высоту 2 по оси Y и устанавливаем её немного назад
-      camera.lookAt(0, 0, 0); // Направляем камеру на центр сцены
+      camera.lookAt(new THREE.Vector3(0, 0, 0)); // Направляем камеру на центр сцены
       scene.add(camera);
 
       // Создание рендерера с поддержкой WebXR
@@ -158,9 +163,9 @@
         camera.updateProjectionMatrix();
 
         renderer.setSize(sizes.width, sizes.height);
-        renderer.setPixelRatio(window.devicePixelRatio);       
+        renderer.setPixelRatio(window.devicePixelRatio);  
       });
-      renderer.setAnimationLoop(render);
+      
 
       // Добавляем обработчик событий для тапа (нажатия)
       document.addEventListener('pointerdown', onPointerDown, false);
@@ -304,8 +309,8 @@
 
     function onSelect() {
       if (reticle.visible && !stopHitTest) {
-        scene.position.setFromMatrixPosition(reticle.matrix);
-        scene.visible = true;
+        model1.position.setFromMatrixPosition(reticle.matrix);
+        model1.visible = true;
 
         reticle.visible = false; // Скрываем ретикул
         hitTestSource = null; // Убираем источник хит-теста
