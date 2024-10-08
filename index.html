@@ -20,6 +20,7 @@
 
         let hitTestSource = null;
         let hitTestSourceRequested = false;
+        let stopHitTest = false; // Флаг для остановки хит-теста
 
         const scene = new THREE.Scene();
 
@@ -65,18 +66,22 @@
         scene.add(controller);
 
         function onSelect() {
-            if (reticle.visible) {
+            if (reticle.visible && !stopHitTest) {
                 const cube = new THREE.Mesh(geometry, material);
                 cube.position.setFromMatrixPosition(reticle.matrix);
                 cube.name = "cube";
                 scene.add(cube);
+
+                reticle.visible = false; // Скрываем ретикул
+                hitTestSource = null; // Убираем источник хит-теста
+                stopHitTest = true;
             }
         }
 
         renderer.setAnimationLoop(render);
 
         function render(timestamp, frame) {
-            if (frame) {
+            if (frame && !stopHitTest) {
                 const referenceSpace = renderer.xr.getReferenceSpace();
                 const session = renderer.xr.getSession();
 
