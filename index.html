@@ -44,7 +44,6 @@
     let stopHitTest = false; // Флаг для остановки хит-теста
 
     init();
-    animate();
 
     function init() {
 
@@ -65,15 +64,16 @@
 
       // Создание рендерера с поддержкой WebXR
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(sizes.width, sizes.height);
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.xr.enabled = true;
       document.body.appendChild(renderer.domElement);
-
-      // Добавляем AR-кнопку
-      const arButton = ARButton.createButton(renderer);
-      // document.body.appendChild(arButton);
       document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
+
+      // // Добавляем AR-кнопку
+      // const arButton = ARButton.createButton(renderer);
+      // // document.body.appendChild(arButton);
+      // document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
 
       // Добавляем свет в сцену
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -156,26 +156,17 @@
       reticle.matrixAutoUpdate = false;
       scene.add(reticle);
 
-
       let controller = renderer.xr.getController(0);
       controller.addEventListener('select', onSelect);
       scene.add(controller);
 
-      window.addEventListener('resize', () => {
-        sizes.width = window.innerWidth;
-        sizes.height = window.innerHeight;
-
-        camera.aspect = sizes.width / sizes.height;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(sizes.width, sizes.height);
-        renderer.setPixelRatio(window.devicePixelRatio);
-      });
-
-
       // Добавляем обработчик событий для тапа (нажатия)
       document.addEventListener('pointerdown', onPointerDown, false);
+
     }
+
+
+
 
     function onPointerDown(event) {
       if (animationInProgress) {
@@ -215,48 +206,21 @@
       }
     }
 
-    function resetModels() {
-      if (isModelScaled) {
-        objects.forEach((model) => {
-          const initialScale = initialScales.get(model);
-          if (initialScale) {
-            animateScaling(model, initialScale.x);
-          }
-        });
-        isModelScaled = false;
+   
+
+
+    function onSelect() {
+      if (reticle.visible && !stopHitTest) {
+        model1.position.setFromMatrixPosition(reticle.matrix);
+        model1.visible = true;
+
+        reticle.visible = false; // Скрываем ретикул
+        hitTestSource = null; // Убираем источник хит-теста
+        stopHitTest = true;
       }
     }
 
-    function animateScaling(model, targetScale, onComplete = null) {
-
-      const startScale = model.scale.x;
-      const scaleDiff = targetScale - startScale;
-      console.log(model.name + " " + startScale + " " + targetScale);
-      let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
-      let progress = 0;
-      //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
-      function animate() {
-        progress += scalingSpeed;
-
-        if (progress > 1) {
-          progress = 1; // Завершаем анимацию, если прогресс превышает 1
-        }
-        const newScale = startScale + scaleDiff * progress;
-        model.scale.set(newScale, newScale, newScale);
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          animationInProgress = false; // Анимация завершена, сбрасываем флаг
-
-          if (onComplete) {
-            onComplete(); // Выполняем коллбек, если передан
-          }
-        }
-      }
-
-      requestAnimationFrame(animate);
-    }
+    renderer.setAnimationLoop(render);
 
     function render(timestamp, frame) {
       if (frame && !stopHitTest) {
@@ -307,22 +271,68 @@
       }
 
       renderer.render(scene, camera);
-    }
+    } 
+
+    window.addEventListener('resize', () => {
+      sizes.width = window.innerWidth;
+      sizes.height = window.innerHeight;
+
+      camera.aspect = sizes.width / sizes.height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(sizes.width, sizes.height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+    });
+
 
     function animate() {
       renderer.setAnimationLoop(render);
     }
 
-    function onSelect() {
-      if (reticle.visible && !stopHitTest) {
-        model1.position.setFromMatrixPosition(reticle.matrix);
-        model1.visible = true;
-
-        reticle.visible = false; // Скрываем ретикул
-        hitTestSource = null; // Убираем источник хит-теста
-        stopHitTest = true;
+    function resetModels() {
+      if (isModelScaled) {
+        objects.forEach((model) => {
+          const initialScale = initialScales.get(model);
+          if (initialScale) {
+            animateScaling(model, initialScale.x);
+          }
+        });
+        isModelScaled = false;
       }
     }
+    
+    function animateScaling(model, targetScale, onComplete = null) {
+
+      const startScale = model.scale.x;
+      const scaleDiff = targetScale - startScale;
+      console.log(model.name + " " + startScale + " " + targetScale);
+      let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
+      let progress = 0;
+      //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
+      function animate() {
+        progress += scalingSpeed;
+
+        if (progress > 1) {
+          progress = 1; // Завершаем анимацию, если прогресс превышает 1
+        }
+        const newScale = startScale + scaleDiff * progress;
+        model.scale.set(newScale, newScale, newScale);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          animationInProgress = false; // Анимация завершена, сбрасываем флаг
+
+          if (onComplete) {
+            onComplete(); // Выполняем коллбек, если передан
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+
   </script>
 </body>
 
