@@ -31,7 +31,7 @@
         //Переменные для моделей
         let model1, model2, model3, model4, model5, floor;
         let isModelScaled = false;
-        let scalingTime = 0.5;  // Время анимации  (ТУТ ПОДУМАТЬ)
+        let scalingTime = 3;  // Время анимации  (ТУТ ПОДУМАТЬ)
         let standartModelScale = 0.03;
         let bigMutiply = 1.5;
         let smallMultiply = 0.75;
@@ -235,10 +235,7 @@
                     }
                 });
                 isModelScaled = false;
-            }
-            else {
-                animationInProgress = false;
-            }
+            }         
         }
 
         function animateScaling(model, targetScale, onComplete = null) {
@@ -250,7 +247,7 @@
             //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
             function animate() {
                 progress += scalingSpeed;
-                console.log(progress);
+                // console.log(progress);
                 if (progress > 1) {
                     progress = 1; // Завершаем анимацию, если прогресс превышает 1
                     animationInProgress = false; // Анимация завершена, сбрасываем флаг
