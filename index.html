@@ -108,6 +108,7 @@
             scene.add(model2);
             initialScales.set(model2, model2.scale.clone());
             objects.push(model2);
+            modelGroup.add(model2);
         });
         // Загрузка третьей модели
         loader.load('models/building1.glb', function (gltf) {
@@ -117,6 +118,7 @@
             scene.add(model3);
             initialScales.set(model3, model3.scale.clone());
             objects.push(model3);
+            modelGroup.add(model3);
         });
 
         // Загрузка 4 модели
@@ -127,6 +129,7 @@
             scene.add(model4);
             initialScales.set(model4, model4.scale.clone());
             objects.push(model4);
+            modelGroup.add(model4);
         });
 
         // Загрузка 5 модели
@@ -138,10 +141,11 @@
             scene.add(model5);
             initialScales.set(model5, model5.scale.clone());
             objects.push(model5);
+            modelGroup.add(model5);
         });
         console.log(objects);
 
-        modelGroup.visible = false;  // Скрываем его на старте
+        // modelGroup.visible = false;  // Скрываем его на старте
         console.log("Группа скрыта");
 
         let controller = renderer.xr.getController(0);
