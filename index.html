@@ -236,6 +236,9 @@
                 });
                 isModelScaled = false;
             }
+            else {
+                animationInProgress = false;
+            }
         }
 
         function animateScaling(model, targetScale, onComplete = null) {
@@ -243,6 +246,7 @@
             const scaleDiff = targetScale - startScale;
             let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
             let progress = 0;
+            requestAnimationFrame(animate);
             //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
             function animate() {
                 progress += scalingSpeed;
@@ -250,7 +254,7 @@
                 if (progress > 1) {
                     progress = 1; // Завершаем анимацию, если прогресс превышает 1
                     animationInProgress = false; // Анимация завершена, сбрасываем флаг
-                    console.log("AnimationInProgress =" + animationInProgress);
+                    console.log("AnimationInProgress = false");
                 }
                 const newScale = startScale + scaleDiff * progress;
                 model.scale.set(newScale, newScale, newScale);
@@ -258,39 +262,38 @@
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
-                    
-                    
-
+                    progress = 1;
                     if (onComplete) {
                         onComplete(); // Выполняем коллбек, если передан
                     }
                 }
             }
 
-            requestAnimationFrame(animate);
+
         }
 
 
         function onPointerDown(event) {
+            if (animationInProgress) {
+                console.log("AnimationInProgress = true");
+                return;
+            }
             console.log("Click");
             pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
             raycaster.setFromCamera(pointer, camera);
 
             const intersects = raycaster.intersectObjects(objects, true);
-
+            animationInProgress = true;
             if (intersects.length > 0) {
-                if (animationInProgress) {
-                    console.log("AnimationInProgress =" + animationInProgress);
-                    return;
-                }
-                let clickedModel = intersects[0].object;
 
+                let clickedModel = intersects[0].object;
+                
                 // Поднимаемся вверх по иерархии, чтобы получить корневую модель
                 while (clickedModel.parent && !objects.includes(clickedModel)) {
                     clickedModel = clickedModel.parent;
                 }
                 if (!isModelScaled) {
-                    animationInProgress = true;
+                    
                     animateScaling(clickedModel, clickedModel.scale.x * bigMutiply);    //Увеличить выбранную модель
 
                     objects.forEach((model) => {
