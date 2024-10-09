@@ -141,7 +141,7 @@
         console.log(objects);
 
         scene.add(modelGroup);
-        modelGroup.visible = false;  // Скрываем его на старте
+        // modelGroup.visible = false;  // Скрываем его на старте
         console.log("Группа скрыта");
 
         let controller = renderer.xr.getController(0);
@@ -239,10 +239,11 @@
         }
 
         function animateScaling(model, targetScale, onComplete = null) {
-
+            if (animationInProgress) {
+                return;
+            }
             const startScale = model.scale.x;
             const scaleDiff = targetScale - startScale;
-            console.log(model.name + " " + startScale + " " + targetScale);
             let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
             let progress = 0;
             //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
@@ -259,6 +260,7 @@
                     requestAnimationFrame(animate);
                 } else {
                     animationInProgress = false; // Анимация завершена, сбрасываем флаг
+                    console.log("AnimationInProgress = false");
 
                     if (onComplete) {
                         onComplete(); // Выполняем коллбек, если передан
@@ -272,7 +274,7 @@
 
         function onPointerDown(event) {
             if (animationInProgress) {
-                console.log("AnimationInProgress");
+                console.log("AnimationInProgress = true");
                 return;
             }
             console.log("Click");
