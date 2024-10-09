@@ -145,7 +145,8 @@
         });
         console.log(objects);
 
-        // modelGroup.visible = false;  // Скрываем его на старте
+        scene.add(modelGroup);
+        modelGroup.visible = false;  // Скрываем его на старте
         console.log("Группа скрыта");
 
         let controller = renderer.xr.getController(0);
