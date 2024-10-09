@@ -39,7 +39,7 @@
         const objects = [];
         const initialScales = new Map();
         let modelGroup = new THREE.Group();  // Создаём контейнер для всех моделей
-
+        
         let scene = new THREE.Scene();
 
         const sizes = {
@@ -76,7 +76,7 @@
         reticle.matrixAutoUpdate = false;
         scene.add(reticle);
 
-        modelGroup.visible = false;  // Скрываем его на старте
+        
 
         // Используем GLTFLoader для загрузки моделей
         const loader = new THREE.GLTFLoader();
@@ -141,6 +141,8 @@
         });
         console.log(objects);
 
+        modelGroup.visible = false;  // Скрываем его на старте
+        console.log("Группа скрыта");
 
         let controller = renderer.xr.getController(0);
         controller.addEventListener('select', onSelect);
