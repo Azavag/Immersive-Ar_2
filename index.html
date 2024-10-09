@@ -151,11 +151,12 @@
 
         function onSelect() {
             if (reticle.visible && !stopHitTest) {
-                floor.position.setFromMatrixPosition(reticle.matrix);
+                modelGroup.position.setFromMatrixPosition(reticle.matrix);
 
                 reticle.visible = false; // Скрываем ретикул
                 hitTestSource = null; // Убираем источник хит-теста
                 stopHitTest = true;
+                modelGroup.visible = true; 
             }
         }
 
