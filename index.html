@@ -43,61 +43,20 @@
         });
 
         const modelViewer = document.querySelector("#model-viewer");
-
-        // Ждём загрузки графа сцены
-        modelViewer.addEventListener('scene-graph-ready', () => {
-            console.log('Граф сцены загружен');
-
-            // Получаем доступ к модели
-            const model = modelViewer.model;
-
-            // Перебираем все части модели и выводим их имена
-            model.scene.traverse((node) => {
-                console.log('Найден узел:', node.name);
-            });
-        });
-
-        // Функция для увеличения масштаба части модели
-        function scaleUpPart(part) {
-            const currentScale = part.scale;
-            part.scale.set(currentScale.x * 1.5, currentScale.y * 1.5, currentScale.z * 1.5);
-        }
-
-        // Обработчик клика по модели
-        modelViewer.addEventListener('click', (event) => {
-            const model = modelViewer.model;
-            const rect = modelViewer.getBoundingClientRect();
-
-            // Координаты клика относительно элемента model-viewer
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            // Используем позицию и нормаль из точки клика
-            const hitResult = modelViewer.positionAndNormalFromPoint(x, y);
-
-            if (hitResult) {
-                const hitPosition = hitResult.position;
-
-                let closestPart = null;
-                let closestDistance = Infinity;
-
-                // Ищем ближайший узел к точке клика
-                model.scene.traverse((node) => {
-                    if (node instanceof THREE.Mesh) {
-                        const distance = node.getWorldPosition(new THREE.Vector3()).distanceTo(hitPosition);
-                        if (distance < closestDistance) {
-                            closestDistance = distance;
-                            closestPart = node;
-                        }
-                    }
-                });
-
-                if (closestPart) {
-                    console.log('Клик по части:', closestPart.name);
-                    scaleUpPart(closestPart);
+        modelViewer.addEventListener("load", () => {
+            const changeColor = (event) => {
+                if (modelViewer.modelIsVisible) {
+                    // const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
+                    // if (material != null) {
+                    //     material.pbrMetallicRoughness.
+                    //         setBaseColorFactor([Math.random(), Math.random(), Math.random()]);
+                    // }
+                    console.log(modelViewer.localName);
                 }
-            }
+            };
+            document.addEventListener("click", changeColor);
         });
+
     </script>
 
     <style>
