@@ -43,9 +43,15 @@
         });
 
         const modelViewer = document.querySelector("#model-viewer");
+
         modelViewer.addEventListener("load", () => {
-            const changeColor = (event) => {
+            console.log("Модель загружены");
+            const model = modelViewer.model;
+
+            const scaleUpPart = (event) => {
                 if (modelViewer.modelIsVisible) {
+                    const currentScale = model.scale;
+                    model.scale.set(currentScale.x * 1.5, currentScale.y * 1.5, currentScale.z * 1.5);
                     // const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
                     // if (material != null) {
                     //     material.pbrMetallicRoughness.
@@ -54,8 +60,10 @@
                     console.log(modelViewer.localName);
                 }
             };
-            document.addEventListener("click", changeColor);
+            document.addEventListener("click", scaleUpPart);
         });
+
+       
 
     </script>
 
