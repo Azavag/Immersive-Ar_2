@@ -50,8 +50,8 @@
 
             const scaleUpPart = (event) => {
                 if (modelViewer.modelIsVisible) {
-                    const currentScale = model.scale;
-                    model.scale.set(currentScale.x * 1.5, currentScale.y * 1.5, currentScale.z * 1.5);
+                    modelViewer.scale = `0.1 0.1 0.1`;
+
                     // const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
                     // if (material != null) {
                     //     material.pbrMetallicRoughness.
