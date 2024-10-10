@@ -4,314 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Scene Placement with Button</title>
+    <title>3D Model Viewer</title>
+    <!-- Подключение библиотеки model-viewer -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
         body {
             margin: 0;
-            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 500px;
+            max-width: 600px;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
-    <!-- Подключаем GLTFLoader -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 
-<body style="margin: 0; overflow: hidden;">
-    <script type="module">
-        import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.130.1/examples/jsm/webxr/ARButton.js';
+<body>
 
-        //Переменные для определения плоскостей
-        let hitTestSource = null;
-        let hitTestSourceRequested = false;
-        let stopHitTest = false; // Флаг для остановки хит-теста
-        //Переменные для определения кликов
-        let raycaster = new THREE.Raycaster();
-        let pointer = new THREE.Vector2();
-
-        //Переменные для моделей
-        let model1, model2, model3, model4, model5, floor;
-        let isModelScaled = false;
-        let scalingTime = 1;  // Время анимации  (ТУТ ПОДУМАТЬ)
-        let standartModelScale = 0.03;
-        let bigMutiply = 1.5;
-        let smallMultiply = 0.75;
-        let animationInProgress = false;
-        const objects = [];
-        const initialScales = new Map();
-        let modelGroup = new THREE.Group();  // Создаём контейнер для всех моделей
-
-        let scene = new THREE.Scene();
-
-        const sizes = {
-            width: window.innerWidth,
-            height: window.innerHeight
-        };
-
-        const light = new THREE.AmbientLight(0xffffff, 1.0);
-        scene.add(light);
-
-        const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
-        camera.position.set(0, 2, 2);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
-        scene.add(camera);
-
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true
-        });
-
-        renderer.setSize(sizes.width, sizes.height);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.xr.enabled = true;
-
-        document.body.appendChild(renderer.domElement);
-        document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
-
-        // Reticle (указатель) для обнаружения поверхности
-        let reticle = new THREE.Mesh(
-            new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
-            new THREE.MeshStandardMaterial({ color: 0x00ff00 })
-        );
-        reticle.visible = false;
-        reticle.matrixAutoUpdate = false;
-        scene.add(reticle);
-
-
-        // Используем GLTFLoader для загрузки моделей
-        const loader = new THREE.GLTFLoader();
-        // Добавление пола
-        const geometry = new THREE.BoxGeometry(3, 0.02, 2);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        floor = new THREE.Mesh(geometry, material);
-        floor.position.set(0, -0.1, -1);
-        scene.add(floor);
-        modelGroup.add(floor);
-
-        //Загрузка первой модели
-        loader.load('models/building1.glb', function (gltf) {
-            model1 = gltf.scene;
-            model1.position.set(-0.1, 0, -1);  // Позиционируем первую модель
-            model1.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-            scene.add(model1);
-            initialScales.set(model1, model1.scale.clone());
-            objects.push(model1);
-            modelGroup.add(model1);
-        });
-        // Загрузка второй модели
-        loader.load('models/building2.glb', function (gltf) {
-            model2 = gltf.scene;
-            model2.position.set(0.1, 0, -1);  // Позиционируем вторую модель
-            model2.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-            scene.add(model2);
-            initialScales.set(model2, model2.scale.clone());
-            objects.push(model2);
-            modelGroup.add(model2);
-        });
-        // Загрузка третьей модели
-        loader.load('models/building1.glb', function (gltf) {
-            model3 = gltf.scene;
-            model3.position.set(0, 0, -0.5);  // Позиционируем вторую модель
-            model3.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-            scene.add(model3);
-            initialScales.set(model3, model3.scale.clone());
-            objects.push(model3);
-            modelGroup.add(model3);
-        });
-        // Загрузка 4 модели
-        loader.load('models/building2.glb', function (gltf) {
-            model4 = gltf.scene;
-            model4.position.set(1, 0, -1.3);  // Позиционируем вторую модель
-            model4.scale.set(standartModelScale, standartModelScale, standartModelScale);  // Устанавливаем начальный размер
-            scene.add(model4);
-            initialScales.set(model4, model4.scale.clone());
-            objects.push(model4);
-            modelGroup.add(model4);
-        });
-        // Загрузка 5 модели
-        loader.load('models/school_building.glb', function (gltf) {
-            model5 = gltf.scene;
-            model5.position.set(-1, 0, -1);  // Позиционируем вторую модель
-            model5.scale.set(standartModelScale * 7, standartModelScale * 7, standartModelScale * 7);  // Устанавливаем начальный размер
-            model5.rotation.y = 3 * Math.PI / 4;  // 45 градусов в радианах
-            scene.add(model5);
-            initialScales.set(model5, model5.scale.clone());
-            objects.push(model5);
-            modelGroup.add(model5);
-        });
-        console.log(objects);
-
-        scene.add(modelGroup);
-        modelGroup.visible = false;  // Скрываем его на старте
-        console.log("Группа скрыта");
-
-        let controller = renderer.xr.getController(0);
-        controller.addEventListener('select', onSelect);
-        scene.add(controller);
-
-        // Добавляем обработчик событий для тапа (нажатия)
-        document.addEventListener('pointerdown', onPointerDown, false);
-
-        function onSelect() {
-            if (reticle.visible && !stopHitTest) {
-                modelGroup.position.setFromMatrixPosition(reticle.matrix);
-
-                reticle.visible = false; // Скрываем ретикул
-                hitTestSource = null; // Убираем источник хит-теста
-                stopHitTest = true;
-                modelGroup.visible = true;
-            }
-        }
-
-        renderer.setAnimationLoop(render);
-
-        function render(timestamp, frame) {
-            if (frame && !stopHitTest) {
-                const referenceSpace = renderer.xr.getReferenceSpace();
-                const session = renderer.xr.getSession();
-
-                if (!hitTestSourceRequested) {
-                    session.requestReferenceSpace('viewer').then((referenceSpace) => {
-                        session.requestHitTestSource({ space: referenceSpace }).then((source) => {
-                            hitTestSource = source;
-                        });
-                    });
-
-                    hitTestSourceRequested = true;
-
-                    session.addEventListener("end", () => {
-                        hitTestSourceRequested = false;
-                        hitTestSource = null;
-                    });
-                }
-
-                if (hitTestSource) {
-                    const hitTestResults = frame.getHitTestResults(hitTestSource);
-                    if (hitTestResults.length > 0) {
-                        const hit = hitTestResults[0];
-
-                        // Проверяем нормаль поверхности на горизонтальность
-                        const hitMatrix = hit.getPose(referenceSpace).transform.matrix;
-                        const normal = new THREE.Vector3(hitMatrix[4], hitMatrix[5], hitMatrix[6]); // Это нормаль
-
-                        const up = new THREE.Vector3(0, 1, 0); // Вектор Y
-                        const dotProduct = normal.dot(up); // Скалярное произведение нормали и вектора Y
-
-                        const angle = Math.acos(dotProduct); // Угол между нормалью и Y
-
-                        const threshold = Math.PI / 6; // Пороговое значение угла (30 градусов)
-
-                        if (Math.abs(angle) < threshold) {
-                            reticle.visible = true;
-                            reticle.matrix.fromArray(hit.getPose(referenceSpace).transform.matrix);
-                        } else {
-                            reticle.visible = false; // Если поверхность не горизонтальная, скрываем указатель
-                        }
-                    } else {
-                        reticle.visible = false;
-                    }
-                }
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        window.addEventListener('resize', () => {
-            sizes.width = window.innerWidth;
-            sizes.height = window.innerHeight;
-
-            camera.aspect = sizes.width / sizes.height;
-            camera.updateProjectionMatrix();
-
-            renderer.setSize(sizes.width, sizes.height);
-            renderer.setPixelRatio(window.devicePixelRatio);
-        });
-
-        function resetModels() {
-            if (isModelScaled) {
-                objects.forEach((model) => {
-                    const initialScale = initialScales.get(model);
-                    if (initialScale) {
-                        animateScaling(model, initialScale.x);
-                    }
-                });
-                isModelScaled = false;
-            }
-        }
-
-        function animateScaling(model, targetScale, onComplete = null) {
-            const startScale = model.scale.x;
-            const scaleDiff = targetScale - startScale;
-            let scalingSpeed = Math.abs(scaleDiff) / scalingTime;
-            let progress = 0;
-            requestAnimationFrame(animate);
-            //ДОБАВИТЬ ФУНКЦИЮ ПЛАВНОСТИ
-            function animate() {
-                progress += scalingSpeed;
-                // console.log(progress);
-                if (progress > 1) {
-                    progress = 1; // Завершаем анимацию, если прогресс превышает 1
-                    animationInProgress = false; // Анимация завершена, сбрасываем флаг
-                    console.log("progress = 1");
-                }
-                const newScale = startScale + scaleDiff * progress;
-                model.scale.set(newScale, newScale, newScale);
-
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    if (onComplete) {
-                        onComplete(); // Выполняем коллбек, если передан
-                    }
-                    return;
-                }
-            }
-
-
-        }
-
-
-        function onPointerDown(event) {
-            if (animationInProgress) {
-                console.log("Нельзя кликать");
-                return;
-            }
-            console.log("Click");
-            pointer.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
-            raycaster.setFromCamera(pointer, camera);
-
-            const intersects = raycaster.intersectObjects(objects, true);
-            animationInProgress = true;
-            if (intersects.length > 0) {
-
-                let clickedModel = intersects[0].object;
-
-                // Поднимаемся вверх по иерархии, чтобы получить корневую модель
-                while (clickedModel.parent && !objects.includes(clickedModel)) {
-                    clickedModel = clickedModel.parent;
-                }
-                if (!isModelScaled) {
-
-                    animateScaling(clickedModel, clickedModel.scale.x * bigMutiply);    //Увеличить выбранную модель
-
-                    objects.forEach((model) => {
-                        if (model !== clickedModel) {
-                            animateScaling(model, model.scale.x * smallMultiply);     //Остальные модели уменьшить
-                        }
-                    });
-                    isModelScaled = true;
-                }
-                else {
-                    resetModels();
-                }
-            }
-            else {
-                resetModels();
-            }
-        }
-        // function animate() {
-        //     renderer.setAnimationLoop(render);
-        // }
-    </script>
+    <!-- Элемент model-viewer -->
+    <model-viewer src="building1.glb" <!-- Укажите путь к вашей 3D модели -->
+        alt="A 3D model of an object"
+        ar <!-- Включение AR режима -->
+        camera-controls <!-- Включение контроля камеры -->
+        auto-rotate <!-- Автоматическое вращение модели -->
+        ar-modes="webxr scene-viewer quick-look" <!-- Поддержка разных AR режимов -->
+        shadow-intensity="1" <!-- Интенсивность тени -->
+        exposure="1" <!-- Экспозиция для улучшения освещения -->
+        environment-image="neutral" <!-- Стандартное окружение для отражений -->
+        style="width: 100%; height: 500px;">
+    </model-viewer>
 
 </body>
 
