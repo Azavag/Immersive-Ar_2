@@ -26,7 +26,7 @@
 
 <body>
 
-    <model-viewer id="model-viewer" src="models/building1.glb" ar ar-modes="scene-viewer quick-look" ar-scale="auto"
+    <model-viewer id="model-viewer" src="models/Unity-park.glb" ar ar-modes="scene-viewer quick-look" ar-scale="auto"
         camera-controls touch-action="pan-y" alt="A 3D model of an astronaut" shadow-intensity="2" auto-rotate
         disable-pan>
         <div id="error" class="hide">AR is not supported on this device</div>
@@ -42,28 +42,7 @@
             }
         });
 
-        const modelViewer = document.querySelector("#model-viewer");
-
-        modelViewer.addEventListener("load", () => {
-            console.log("Модель загружены");
-            const model = modelViewer.model;
-
-            const scaleUpPart = (event) => {
-                if (modelViewer.modelIsVisible) {
-                    modelViewer.scale = `0.1 0.1 0.1`;
-
-                    // const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
-                    // if (material != null) {
-                    //     material.pbrMetallicRoughness.
-                    //         setBaseColorFactor([Math.random(), Math.random(), Math.random()]);
-                    // }
-                    console.log(modelViewer.localName);
-                }
-            };
-            document.addEventListener("click", scaleUpPart);
-        });
-
-       
+        const modelViewer = document.querySelector("#model-viewer");      
 
     </script>
 
