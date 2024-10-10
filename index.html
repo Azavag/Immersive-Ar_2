@@ -41,32 +41,62 @@
                 });
             }
         });
-    </script>
 
-    <script>
-        const modelViewer = document.querySelector('#model-viewer');
+        const modelViewer = document.querySelector("#model-viewer");
 
-        // Получаем доступ к сцене и частям модели
+        // Ждём загрузки графа сцены
         modelViewer.addEventListener('scene-graph-ready', () => {
-            const scene = modelViewer.scene;
+            console.log('Граф сцены загружен');
 
-            // Обход всех узлов модели
-            scene.traverse((node) => {
-                if (node.name) {
-                    console.log('Node:', node.name);
+            // Получаем доступ к модели
+            const model = modelViewer.model;
 
-                    // Добавляем кликабельность узлам модели
-                    node.addEventListener('click', () => {
-                        console.log('Clicked on:', node.name);
-                        // Увеличение масштаба узла
-                        if (node.scale.x === 1) {
-                            node.scale.set(2, 2, 2);  // Увеличить масштаб в 2 раза
-                        } else {
-                            node.scale.set(1, 1, 1);  // Вернуть к исходному масштабу
-                        }
-                    });
-                }
+            // Перебираем все части модели и выводим их имена
+            model.scene.traverse((node) => {
+                console.log('Найден узел:', node.name);
             });
+        });
+
+        // Функция для увеличения масштаба части модели
+        function scaleUpPart(part) {
+            const currentScale = part.scale;
+            part.scale.set(currentScale.x * 1.5, currentScale.y * 1.5, currentScale.z * 1.5);
+        }
+
+        // Обработчик клика по модели
+        modelViewer.addEventListener('click', (event) => {
+            const model = modelViewer.model;
+            const rect = modelViewer.getBoundingClientRect();
+
+            // Координаты клика относительно элемента model-viewer
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            // Используем позицию и нормаль из точки клика
+            const hitResult = modelViewer.positionAndNormalFromPoint(x, y);
+
+            if (hitResult) {
+                const hitPosition = hitResult.position;
+
+                let closestPart = null;
+                let closestDistance = Infinity;
+
+                // Ищем ближайший узел к точке клика
+                model.scene.traverse((node) => {
+                    if (node instanceof THREE.Mesh) {
+                        const distance = node.getWorldPosition(new THREE.Vector3()).distanceTo(hitPosition);
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestPart = node;
+                        }
+                    }
+                });
+
+                if (closestPart) {
+                    console.log('Клик по части:', closestPart.name);
+                    scaleUpPart(closestPart);
+                }
+            }
         });
     </script>
 
