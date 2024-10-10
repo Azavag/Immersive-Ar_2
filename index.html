@@ -26,7 +26,7 @@
 
 <body>
 
-    <model-viewer id="model-viewer" src="models/building1.glb" ar ar-modes="scene-viewer quick-look"
+    <model-viewer id="model-viewer" src="models/building1.glb" ar ar-modes="scene-viewer quick-look" ar-scale="auto"
         camera-controls touch-action="pan-y" alt="A 3D model of an astronaut" shadow-intensity="2" auto-rotate
         disable-pan>
         <div id="error" class="hide">AR is not supported on this device</div>
@@ -42,6 +42,34 @@
             }
         });
     </script>
+
+    <script>
+        const modelViewer = document.querySelector('#model-viewer');
+
+        // Получаем доступ к сцене и частям модели
+        modelViewer.addEventListener('scene-graph-ready', () => {
+            const scene = modelViewer.scene;
+
+            // Обход всех узлов модели
+            scene.traverse((node) => {
+                if (node.name) {
+                    console.log('Node:', node.name);
+
+                    // Добавляем кликабельность узлам модели
+                    node.addEventListener('click', () => {
+                        console.log('Clicked on:', node.name);
+                        // Увеличение масштаба узла
+                        if (node.scale.x === 1) {
+                            node.scale.set(2, 2, 2);  // Увеличить масштаб в 2 раза
+                        } else {
+                            node.scale.set(1, 1, 1);  // Вернуть к исходному масштабу
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
     <style>
         #error {
             background-color: #ffffffdd;
