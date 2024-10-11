@@ -17,14 +17,17 @@
     </model-viewer>
 
     <button class="view-button" slot="hotspot-0"
-        data-position="0m 0m 0m"
+        data-position="-13m 0m 0m"
         data-normal="-0.9557795999188702m 0m 0.2940839274406617m" 
-        data-target="0m 0m 0m"
+        data-orbit="10.89188deg 119.9775deg 0.03543022m"
+        data-target="-13m 0m 0m"
         data-visibility-attribute="visible">
         Многофункциональный комплекс
     </button>
 
     <script>
+        let modelViewer = document.querySelector("#model-viewer");
+        
         document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
             if (event.detail.status === 'failed') {
                 const error = document.querySelector("#error");
@@ -35,20 +38,21 @@
             }
         });
 
-        const modelViewer = document.querySelector("#model-viewer");
+        
 
     </script>
 
     <script type="module">
-        const modelViewer2 = document.querySelector("#model-viewer");
         const annotationClicked = (annotation) => {
+            console.log("Button click");
             let dataset = annotation.dataset;
-            modelViewer2.cameraTarget = dataset.target;
-            // modelViewer2.cameraOrbit = dataset.orbit;
-            modelViewer2.fieldOfView = '45deg';
+            modelViewer.cameraTarget = dataset.target;
+            modelViewer.cameraOrbit = dataset.orbit;
+            modelViewer.fieldOfView = '45deg';
         }
 
-        modelViewer2.querySelectorAll('button').forEach((hotspot) => {
+        modelViewer.querySelectorAll('button').forEach((hotspot) => {
+            console.log(hotspot);
             hotspot.addEventListener('click', () => annotationClicked(hotspot));
         });
     </script>
