@@ -10,23 +10,30 @@
 </head>
 
 <body>
-    <model-viewer id="model-viewer" src="models/Unity-park.glb" ar ar-modes="scene-viewer quick-look" ar-scale="auto"
-        camera-controls touch-action="pan-y" alt="A 3D model Unity park" shadow-intensity="1" auto-rotate disable-pan>
+    <model-viewer id="model-viewer" src="models/Unity-park.glb" alt="A 3D model Unity park"
+        ar-modes="scene-viewer quick-look" ar-scale="auto" camera-controls touch-action="none" shadow-intensity="1"
+        interpolation-decay="200" min-camera-orbit="auto auto 5%" ar>
+
         <button id="ar-button" slot="ar-button">AR-режим</button>
         <div id="error" class="hide">AR is not supported on this device</div>
 
         <button class="view-button" slot="hotspot-0"
-        data-position="-13.670278709801359m 7.535573146745449m 0.024282267268603164m"
-        data-normal="-0.9557795999188702m 0m 0.2940839274406617m" 
-        data-orbit="10.89188deg 119.9775deg 0.03543022m"
-        data-target="-13.670278709801359m 7.535573146745449m 0.024282267268603164m"
-        data-visibility-attribute="visible">
-        Многофункциональный комплекс
-    </button>
+            data-position="-13.670278709801359m 7.535573146745449m 0.024282267268603164m"
+            data-normal="-0.9557795999188702m 0m 0.2940839274406617m" data-orbit="0.89188deg 30deg 0.03543022m"
+            data-target="-13.670278709801359m 7.535573146745449m 0.024282267268603164m">
+            Многофункциональный комплекс
+        </button>
+
+        <button class="view-button" slot="hotspot-1"
+            data-position="14.147547368922144m 1.9497738965976836m 0.9346739672289601m"
+            data-normal="-0.2855129411728137m 0m 0.9583748538139185m"
+            data-target="14.147547368922144m 1.9497738965976836m 0.9346739672289601m">
+            Детский сад
+        </button>
 
     </model-viewer>
 
-   
+
 
     <script>
         let modelViewer = document.querySelector("#model-viewer");
@@ -41,20 +48,21 @@
             }
         });
 
-        
+
 
     </script>
 
     <script type="module">
+        const modelViewer2 = document.querySelector("#model-viewer");
         const annotationClicked = (annotation) => {
             console.log("Button click");
             let dataset = annotation.dataset;
-            modelViewer.cameraTarget = dataset.target;
-            modelViewer.cameraOrbit = dataset.orbit;
-            modelViewer.fieldOfView = '45deg';
+            modelViewer2.cameraTarget = dataset.target;
+            modelViewer2.cameraOrbit = dataset.orbit;
+            modelViewer2.fieldOfView = '45deg';
         }
 
-        modelViewer.querySelectorAll('button').forEach((hotspot) => {
+        modelViewer2.querySelectorAll('button').forEach((hotspot) => {
             console.log(hotspot);
             hotspot.addEventListener('click', () => annotationClicked(hotspot));
         });
@@ -79,8 +87,8 @@
             width: max-content;
             height: max-content;
             transform: translate3d(-50%, -50%, 0);
-          }
-      </style>
+        }
+    </style>
 
 </body>
 
