@@ -4,53 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Page 3D Model Viewer</title>
+    <title>Unity Park</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <style>
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        model-viewer {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        #ar-button {
-            background-color: #007bff;
-            color: white;
-            font-size: 18px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
-        }
-
-        #ar-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
     <model-viewer id="model-viewer" src="models/Unity-park.glb" ar ar-modes="scene-viewer quick-look" ar-scale="auto"
         camera-controls touch-action="pan-y" alt="A 3D model Unity park" shadow-intensity="1" auto-rotate disable-pan>
-        <button id="ar-button" slot="ar-button">Перейти в AR-режим</button>
+        <button id="ar-button" slot="ar-button">AR-режим</button>
         <div id="error" class="hide">AR is not supported on this device</div>
     </model-viewer>
+
+    <button class="view-button" slot="hotspot-0" data-position="0m 0m 0m"
+        data-normal="-0.5829775m 0.2863482m -0.7603565m" data-orbit="-50.94862deg 84.56856deg 0.06545582m"
+        data-target="-0.04384604m 0.07348397m -0.1213202m">
+        Многофункциональный комплекс
+    </button>
+
     <script>
         document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
             if (event.detail.status === 'failed') {
@@ -64,26 +35,9 @@
 
         const modelViewer = document.querySelector("#model-viewer");
 
+        import { ModelViewerElement } from 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+        ModelViewerElement.prototype.showInspector = true;
     </script>
-
-    <style>
-        #error {
-            background-color: #ffffffdd;
-            border-radius: 16px;
-            padding: 16px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate3d(-50%, -50%, 0);
-            transition: opacity 0.3s;
-        }
-
-        #error.hide {
-            opacity: 0;
-            visibility: hidden;
-            transition: visibility 2s, opacity 1s 1s;
-        }
-    </style>
 
 </body>
 
