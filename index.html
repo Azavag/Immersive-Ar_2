@@ -37,7 +37,6 @@
 
     <script>
         let modelViewer = document.querySelector("#model-viewer");
-        modelViewer.scale = `0.1 0.1 0.1`;
         document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
             if (event.detail.status === 'failed') {
                 const error = document.querySelector("#error");
