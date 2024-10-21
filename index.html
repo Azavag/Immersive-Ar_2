@@ -17,10 +17,14 @@
         </div>
     </div>
 
+    <!-- Логотипы -->
+    <img src="images/5sensar-logo.svg" alt="Logo Left" class="logo logo-left">
+    <img src="images/Unity-park-logo.png" alt="Logo Right" class="logo logo-right">
+
     <model-viewer id="model-viewer" src="models/UnityParkOptimized.glb" alt="A 3D model Unity park"
         ar-modes="scene-viewer quick-look" ar-scale="auto" camera-controls touch-action="none" shadow-intensity="1"
-        interpolation-decay="200" min-camera-orbit="auto auto 5%" camera-orbit="-10deg -45deg 5m" camera-target="0m 0m 0m"
-        field-of-view="45deg" ar>
+        interpolation-decay="200" min-camera-orbit="auto auto 5%" camera-orbit="-10deg -45deg 5m"
+        camera-target="0m 0m 0m" field-of-view="45deg" ar>
 
         <button id="ar-button" slot="ar-button">AR-режим</button>
         <div id="error" class="hide">AR is not supported on this device</div>
