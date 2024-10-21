@@ -10,6 +10,13 @@
 </head>
 
 <body>
+
+    <div id="loading-screen">
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+    </div>
+
     <model-viewer id="model-viewer" src="models/UnityParkOptimized.glb" alt="A 3D model Unity park"
         ar-modes="scene-viewer quick-look" ar-scale="auto" camera-controls touch-action="none" shadow-intensity="1"
         interpolation-decay="200" min-camera-orbit="auto auto 5%" ar>
@@ -31,12 +38,79 @@
             Детский сад
         </button>
 
+        <button class="Hotspot" slot="hotspot-2"
+            data-position="-0.8341306653599536m 0.28009488100988156m 0.1374088850344517m"
+            data-normal="-0.6880540822355871m 0m 0.7256594104116227m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Многофункциональный комплекс</div>
+        </button><button class="Hotspot" slot="hotspot-3"
+            data-position="-0.9073734110678933m 0.1507534682750702m -0.2609223591867831m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Конгрессно-выставочный центр</div>
+        </button><button class="Hotspot" slot="hotspot-4"
+            data-position="-1.3981310147283001m 0.14099830389022827m -0.33860894143058884m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Медицинская клиника</div>
+        </button><button class="Hotspot" slot="hotspot-5"
+            data-position="-0.6936487796720363m 0.14440646767616272m 0.23109995034220177m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Центр развития талантов</div>
+        </button><button class="Hotspot" slot="hotspot-6"
+            data-position="-1.6899643061933576m 0.14099830389022783m -0.5440687230644539m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">ЦОД</div>
+        </button><button class="Hotspot" slot="hotspot-7"
+            data-position="0.10185626511489998m 0.11197992414236069m -0.20448414247594204m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Университет</div>
+        </button><button class="Hotspot" slot="hotspot-8"
+            data-position="0.1162872537057664m 0.14492858610475645m -0.5361948848448144m"
+            data-normal="-0.23266213437379976m 0.9600522081485442m -0.1554608917307899m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Технопарк</div>
+        </button><button class="Hotspot" slot="hotspot-9"
+            data-position="-0.32415145910321286m 0.12196581810712814m -0.2930662804687154m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Центр высоких биомедицинских технологий</div>
+        </button><button class="Hotspot" slot="hotspot-10"
+            data-position="0.6890299180626669m 0.14099830389022916m -0.39151255809403285m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Офисы</div>
+        </button><button class="Hotspot" slot="hotspot-11"
+            data-position="0.6190484254006192m 0.14099830389022827m 0.09329007894976016m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Инновационный детский сад</div>
+        </button><button class="Hotspot" slot="hotspot-12"
+            data-position="-1.7926717679419326m 0.14099830389022827m -0.07597399843985286m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Университетская школа</div>
+        </button><button class="Hotspot" slot="hotspot-13"
+            data-position="0.32389124502553945m 0.13799633531729683m 0.0811594994100906m"
+            data-normal="-0.32238858803485554m 0m 0.9466074150908032m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Общежития</div>
+        </button><button class="Hotspot" slot="hotspot-14"
+            data-position="-0.39853284673157774m 0.12196581810712903m 0.09344994131107187m" data-normal="0m 1m 0m"
+            data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Гостиница</div>
+        </button>
+
     </model-viewer>
 
+    <script>
+        let modelViewer = document.querySelector('#model-viewer');
+        const loadingScreen = document.querySelector('#loading-screen');
+        const progressBar = document.querySelector('#progress');
 
+        modelViewer.addEventListener('progress', (event) => {
+            const progress = event.detail.totalProgress;
+            progressBar.style.width = `${progress * 100}%`;
+        });
+
+        modelViewer.addEventListener('load', () => {
+            loadingScreen.style.display = 'none';
+        });
+    </script>
 
     <script>
-        let modelViewer = document.querySelector("#model-viewer");
         document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
             if (event.detail.status === 'failed') {
                 const error = document.querySelector("#error");
@@ -48,7 +122,7 @@
         });
 
 
-    
+
     </script>
 
     <script type="module">
@@ -68,7 +142,7 @@
     </script>
 
     <style type="text/css">
-        .view-button {
+        .Hotspot {
             background: #fff;
             border-radius: 4px;
             border: none;
