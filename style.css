@@ -59,17 +59,42 @@ model-viewer {
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 10;
-  }
-  #progress-bar {
+}
+
+#progress-bar {
     width: 80%;
     height: 20px;
     background-color: #ddd;
     border-radius: 10px;
     overflow: hidden;
-  }
-  #progress {
+}
+
+#progress {
     width: 0;
     height: 100%;
     background-color: #76c7c0;
     transition: width 0.3s ease;
-  }
+}
+
+.zoom-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
