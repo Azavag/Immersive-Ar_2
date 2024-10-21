@@ -141,13 +141,14 @@
     </script>
 
     <script type="module">
+        const modelViewer2 = document.querySelector("#model-viewer");
         // Сохраняем начальные значения камеры
         const defaultCameraTarget = modelViewer2.cameraTarget;
         const defaultCameraOrbit = modelViewer2.cameraOrbit;
         const defaultFieldOfView = modelViewer2.fieldOfView;
         let isZoomedIn = false; // Флаг для отслеживания состояния камеры
 
-        const modelViewer2 = document.querySelector("#model-viewer");
+        
 
         const annotationClicked = (annotation) => {
             if (isZoomedIn) {
