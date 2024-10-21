@@ -19,7 +19,8 @@
 
     <model-viewer id="model-viewer" src="models/UnityParkOptimized.glb" alt="A 3D model Unity park"
         ar-modes="scene-viewer quick-look" ar-scale="auto" camera-controls touch-action="none" shadow-intensity="1"
-        interpolation-decay="200" min-camera-orbit="auto auto 5%" ar>
+        interpolation-decay="200" min-camera-orbit="auto auto 5%" camera-orbit="0deg 90deg 5m" camera-target="0m 0m 0m"
+        field-of-view="45deg" ar>
 
         <button id="ar-button" slot="ar-button">AR-режим</button>
         <div id="error" class="hide">AR is not supported on this device</div>
@@ -146,25 +147,29 @@
         const defaultCameraTarget = modelViewer2.cameraTarget;
         const defaultCameraOrbit = modelViewer2.cameraOrbit;
         const defaultFieldOfView = modelViewer2.fieldOfView;
-        let isZoomedIn = false; // Флаг для отслеживания состояния камеры
 
-        
+        // Переменные для отслеживания, какая кнопка была нажата
+        let lastClickedHotspot = null;
+
 
         const annotationClicked = (annotation) => {
-            if (isZoomedIn) {
-                // Возвращаем камеру в исходное положение
+            let dataset = annotation.dataset;
+
+            if (lastClickedHotspot === annotation) {
+                // Если нажата та же самая кнопка, возвращаем камеру в исходное состояние
                 modelViewer2.cameraTarget = defaultCameraTarget;
                 modelViewer2.cameraOrbit = defaultCameraOrbit;
                 modelViewer2.fieldOfView = defaultFieldOfView;
-                isZoomedIn = false; // Обновляем флаг
             } else {
-                // Приближаем камеру к хотспоту
-                let dataset = annotation.dataset;
-                modelViewer2.cameraTarget = dataset.target;
-                modelViewer2.cameraOrbit = dataset.orbit;
-                modelViewer2.fieldOfView = '45deg';
-                isZoomedIn = true; // Обновляем флаг
+                // Если нажата другая кнопка, приближаем камеру к новой цели
+                initialCameraTarget = modelViewer.cameraTarget;
+                initialCameraOrbit = modelViewer.cameraOrbit;
+                modelViewer.cameraTarget = dataset.target;
+                modelViewer.cameraOrbit = dataset.orbit;
             }
+
+            // Обновляем информацию о последней нажатой кнопке
+            lastClickedHotspot = annotation;
         };
 
         modelViewer2.querySelectorAll('button').forEach((hotspot) => {
@@ -184,7 +189,7 @@
             color: rgba(0, 0, 0, 0.8);
             display: block;
             font-family: Futura, Helvetica Neue, sans-serif;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 700;
             max-width: 165px;
             overflow-wrap: break-word;
