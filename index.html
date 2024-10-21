@@ -19,7 +19,7 @@
 
     <model-viewer id="model-viewer" src="models/UnityParkOptimized.glb" alt="A 3D model Unity park"
         ar-modes="scene-viewer quick-look" ar-scale="auto" camera-controls touch-action="pan-y" shadow-intensity="1"
-        interpolation-decay="200" min-camera-orbit="auto auto 5%" camera-orbit="0deg 90deg 5m" camera-target="0m 0m 0m"
+        interpolation-decay="200" min-camera-orbit="auto auto 5%" camera-orbit="-10deg -45deg 5m" camera-target="0m 0m 0m"
         field-of-view="45deg" ar>
 
         <button id="ar-button" slot="ar-button">AR-режим</button>
@@ -193,10 +193,8 @@
             overflow-wrap: break-word;
             padding: 0.5em 1em;
             position: absolute;
-            /* width: max-content;
-            height: max-content; */
-            width: 80px; /* Фиксированная ширина */
-            height: 40px; /* Фиксированная высота */
+            width: max-content;
+            height: max-content;
             transform: translate3d(-50%, -50%, 0);
         }
     </style>
