@@ -17,15 +17,16 @@
         </div>
     </div>
 
-    <model-viewer id="model-viewer" src="models/endesign.glb" ios-src="models/endesign.usdz" alt="A 3D model Unity park"
+    <model-viewer id="model-viewer" src="models/untitled (5).glb" ios-src="models/endesign.usdz" alt="A 3D model Unity park"
         ar-modes="scene-viewer quick-look" ar-scale="auto" touch-action="none" shadow-intensity="0"
         interpolation-decay="200" min-camera-orbit="auto auto 5%" ar autoplay>
 
         <button id="ar-button" slot="ar-button">AR-режим</button>
-        <div id="error" class="hide">AR is not supported on this device</div>       
+        <div id="error" class="hide">AR is not supported on this device</div>
     </model-viewer>
 
     <script>
+        const animationDelay = 2000; // Задержка в миллисекундах
         let modelViewer = document.querySelector('#model-viewer');
         const loadingScreen = document.querySelector('#loading-screen');
         const progressBar = document.querySelector('#progress');
@@ -37,19 +38,30 @@
 
         modelViewer.addEventListener('load', () => {
             loadingScreen.style.display = 'none';
+            startAnimationWithDelay();
         });
+
+        function startAnimationWithDelay() {
+            modelViewer.play();
+            modelViewer.addEventListener('loop', () => {
+                modelViewer.pause();
+                setTimeout(() => {
+                    modelViewer.play();
+                }, animationDelay);
+            });
+        }
     </script>
 
     <script>
-        document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
-            if (event.detail.status === 'failed') {
-                const error = document.querySelector("#error");
-                error.classList.remove('hide');
-                error.addEventListener('transitionend', (event) => {
-                    error.classList.add('hide');
-                });
-            }
-        });
+        // document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
+        //     if (event.detail.status === 'failed') {
+        //         const error = document.querySelector("#error");
+        //         error.classList.remove('hide');
+        //         error.addEventListener('transitionend', (event) => {
+        //             error.classList.add('hide');
+        //         });
+        //     }
+        // });
 
 
 
