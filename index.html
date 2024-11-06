@@ -58,6 +58,10 @@
                         material[channel].setTexture(texture);
                     }
                 }
+
+                document.querySelector('#diffuse').addEventListener('input', (event) => {
+                    createAndApplyTexture('baseColorTexture', event);
+                });
             });
 
 
@@ -71,7 +75,7 @@
                 });
             }
 
-           
+
 
         </script>
 
@@ -86,9 +90,7 @@
             //     }
             // });
 
-            document.querySelector('#diffuse').addEventListener('input', (event) => {
-                createAndApplyTexture('baseColorTexture', event);
-            });
+
 
         </script>
 
