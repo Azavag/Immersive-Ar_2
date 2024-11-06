@@ -28,7 +28,7 @@
     <div class="controls">
         <div>
             <p>Diffuse</p>
-            <select id="BaseColor">
+            <select id="diffuse">
                 <option value="images\textures\snake_baseColor.png">snake_baseColor</option>
                 <option value="images\textures\snake_low_Material.001_BaseColor.png">snake_low_Material</option>
             </select>
@@ -71,9 +71,7 @@
                 });
             }
 
-            document.querySelector('#diffuse').addEventListener('input', (event) => {
-                createAndApplyTexture('baseColorTexture', event);
-            });
+           
 
         </script>
 
@@ -88,7 +86,9 @@
             //     }
             // });
 
-
+            document.querySelector('#diffuse').addEventListener('input', (event) => {
+                createAndApplyTexture('baseColorTexture', event);
+            });
 
         </script>
 
