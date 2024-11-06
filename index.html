@@ -38,6 +38,7 @@
             let modelViewer = document.querySelector('#model-viewer');
             const loadingScreen = document.querySelector('#loading-screen');
             const progressBar = document.querySelector('#progress');
+
             let material;
             modelViewer.addEventListener('progress', (event) => {
                 const progress = event.detail.totalProgress;
@@ -123,7 +124,7 @@
             });
 
             const createAndApplyTexture = async (channel, event) => {
-                const texture = await modelViewerTexture1.createTexture(event.target.value);
+                const texture = await modelViewer2.createTexture(event.target.value);
                 if (channel.includes('base') || channel.includes('metallic')) {
                     material.pbrMetallicRoughness[channel].setTexture(texture);
                 } else {
