@@ -50,18 +50,8 @@
                 material = modelViewer.model.materials[0];
                 console.log(material);
 
-                const createAndApplyTexture = async (channel, event) => {
-                    const texture = await modelViewerTexture1.createTexture(event.target.value);
-                    if (channel.includes('base') || channel.includes('metallic')) {
-                        material.pbrMetallicRoughness[channel].setTexture(texture);
-                    } else {
-                        material[channel].setTexture(texture);
-                    }
-                }
 
-                document.querySelector('#diffuse').addEventListener('input', (event) => {
-                    createAndApplyTexture('baseColorTexture', event);
-                });
+
             });
 
 
@@ -127,6 +117,19 @@
                 console.log(hotspot);
                 hotspot.addEventListener('click', () => annotationClicked(hotspot));
             });
+
+            document.querySelector('#diffuse').addEventListener('input', (event) => {
+                createAndApplyTexture('baseColorTexture', event);
+            });
+
+            const createAndApplyTexture = async (channel, event) => {
+                const texture = await modelViewerTexture1.createTexture(event.target.value);
+                if (channel.includes('base') || channel.includes('metallic')) {
+                    material.pbrMetallicRoughness[channel].setTexture(texture);
+                } else {
+                    material[channel].setTexture(texture);
+                }
+            }
         </script>
 
         <style type="text/css">
