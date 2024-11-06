@@ -4,20 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unity Park</title>
+    <title>Endesign</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
     <div id="loading-screen">
         <div id="progress-bar">
             <div id="progress"></div>
         </div>
     </div>
 
-    <model-viewer id="model-viewer" src="models/endesign.glb" ios-src="models/endesign.usdz" alt="A 3D model Unity park"
+    <model-viewer id="model-viewer" src="models/endesign.glb" ios-src="models/endesign.usdz" alt="A 3D model of logo endesign"
         ar-modes="scene-viewer quick-look" ar-scale="auto" touch-action="none" shadow-intensity="0"
         interpolation-decay="200" ar autoplay>
 
@@ -62,44 +61,6 @@
         //         });
         //     }
         // });
-
-
-
-    </script>
-
-    <script type="module">
-        const modelViewer2 = document.querySelector("#model-viewer");
-        // Сохраняем начальные значения камеры
-        const defaultCameraTarget = modelViewer2.cameraTarget;
-        const defaultCameraOrbit = modelViewer2.cameraOrbit;
-        const defaultFieldOfView = modelViewer2.fieldOfView;
-
-        // Переменные для отслеживания, какая кнопка была нажата
-        let lastClickedHotspot = null;
-
-
-        const annotationClicked = (annotation) => {
-            let dataset = annotation.dataset;
-
-            if (lastClickedHotspot === annotation) {
-                // Если нажата та же самая кнопка, возвращаем камеру в исходное состояние
-                modelViewer2.cameraTarget = defaultCameraTarget;
-                modelViewer2.cameraOrbit = defaultCameraOrbit;
-                modelViewer2.fieldOfView = defaultFieldOfView;
-            } else {
-                // Если нажата другая кнопка, приближаем камеру к новой цели
-                modelViewer.cameraTarget = dataset.target;
-                modelViewer.cameraOrbit = dataset.orbit;
-            }
-
-            // Обновляем информацию о последней нажатой кнопке
-            lastClickedHotspot = annotation;
-        };
-
-        modelViewer2.querySelectorAll('button').forEach((hotspot) => {
-            console.log(hotspot);
-            hotspot.addEventListener('click', () => annotationClicked(hotspot));
-        });
     </script>
 
     <style type="text/css">
