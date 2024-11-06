@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unity Park</title>
+    <title>Test</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <model-viewer id="model-viewer" src="models/endesign.glb" ios-src="models/endesign.usdz" alt="A 3D model Unity park"
+    <model-viewer id="model-viewer" src="models/materialsTest/TestCube.glb" alt="A 3D model Unity park"
         ar-modes="scene-viewer quick-look" ar-scale="auto" touch-action="none" shadow-intensity="0"
         interpolation-decay="200" ar autoplay>
 
@@ -25,105 +25,130 @@
         <div id="error" class="hide">AR is not supported on this device</div>
     </model-viewer>
 
-    <script>
-        const animationDelay = 0; // Задержка в миллисекундах
-        let modelViewer = document.querySelector('#model-viewer');
-        const loadingScreen = document.querySelector('#loading-screen');
-        const progressBar = document.querySelector('#progress');
+    <div class="controls">
+        <div>
+            <p>Diffuse</p>
+            <select id="BaseColor">
+                <option value="images\textures\snake_baseColor.png">snake_baseColor</option>
+                <option value="images\textures\snake_low_Material.001_BaseColor.png">snake_low_Material</option>
+            </select>
+        </div>
 
-        modelViewer.addEventListener('progress', (event) => {
-            const progress = event.detail.totalProgress;
-            progressBar.style.width = `${progress * 100}%`;
-        });
-
-        modelViewer.addEventListener('load', () => {
-            loadingScreen.style.display = 'none';
-            startAnimationWithDelay();
-        });
-
-        function startAnimationWithDelay() {
-            modelViewer.play();
-            modelViewer.addEventListener('loop', () => {
-                modelViewer.pause();
-                setTimeout(() => {
-                    modelViewer.play();
-                }, animationDelay);
+        <script>
+            let modelViewer = document.querySelector('#model-viewer');
+            const loadingScreen = document.querySelector('#loading-screen');
+            const progressBar = document.querySelector('#progress');
+            let material;
+            modelViewer.addEventListener('progress', (event) => {
+                const progress = event.detail.totalProgress;
+                progressBar.style.width = `${progress * 100}%`;
             });
-        }
-    </script>
 
-    <script>
-        // document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
-        //     if (event.detail.status === 'failed') {
-        //         const error = document.querySelector("#error");
-        //         error.classList.remove('hide');
-        //         error.addEventListener('transitionend', (event) => {
-        //             error.classList.add('hide');
-        //         });
-        //     }
-        // });
+            modelViewer.addEventListener('load', () => {
+                loadingScreen.style.display = 'none';
+                startAnimationWithDelay();
+                material = modelViewer.model.materials[0];
+                console.log(material);
 
-
-
-    </script>
-
-    <script type="module">
-        const modelViewer2 = document.querySelector("#model-viewer");
-        // Сохраняем начальные значения камеры
-        const defaultCameraTarget = modelViewer2.cameraTarget;
-        const defaultCameraOrbit = modelViewer2.cameraOrbit;
-        const defaultFieldOfView = modelViewer2.fieldOfView;
-
-        // Переменные для отслеживания, какая кнопка была нажата
-        let lastClickedHotspot = null;
+                const createAndApplyTexture = async (channel, event) => {
+                    const texture = await modelViewerTexture1.createTexture(event.target.value);
+                    if (channel.includes('base') || channel.includes('metallic')) {
+                        material.pbrMetallicRoughness[channel].setTexture(texture);
+                    } else {
+                        material[channel].setTexture(texture);
+                    }
+                }
+            });
 
 
-        const annotationClicked = (annotation) => {
-            let dataset = annotation.dataset;
-
-            if (lastClickedHotspot === annotation) {
-                // Если нажата та же самая кнопка, возвращаем камеру в исходное состояние
-                modelViewer2.cameraTarget = defaultCameraTarget;
-                modelViewer2.cameraOrbit = defaultCameraOrbit;
-                modelViewer2.fieldOfView = defaultFieldOfView;
-            } else {
-                // Если нажата другая кнопка, приближаем камеру к новой цели
-                modelViewer.cameraTarget = dataset.target;
-                modelViewer.cameraOrbit = dataset.orbit;
+            function startAnimationWithDelay() {
+                modelViewer.play();
+                modelViewer.addEventListener('loop', () => {
+                    modelViewer.pause();
+                    setTimeout(() => {
+                        modelViewer.play();
+                    }, animationDelay);
+                });
             }
 
-            // Обновляем информацию о последней нажатой кнопке
-            lastClickedHotspot = annotation;
-        };
+            document.querySelector('#diffuse').addEventListener('input', (event) => {
+                createAndApplyTexture('baseColorTexture', event);
+            });
 
-        modelViewer2.querySelectorAll('button').forEach((hotspot) => {
-            console.log(hotspot);
-            hotspot.addEventListener('click', () => annotationClicked(hotspot));
-        });
-    </script>
+        </script>
 
-    <style type="text/css">
-        .Hotspot {
-            background: rgba(255, 255, 255, 0.6);
-            /* Полупрозрачный белый фон */
-            border-radius: 4px;
-            border: none;
-            box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-            color: rgba(0, 0, 0, 0.8);
-            display: block;
-            font-family: Futura, Helvetica Neue, sans-serif;
-            font-size: 8px;
-            font-weight: 700;
-            max-width: 165px;
-            overflow-wrap: break-word;
-            padding: 0.5em 1em;
-            position: absolute;
-            width: max-content;
-            height: max-content;
-            transform: translate3d(-50%, -50%, 0);
-        }
-    </style>
+        <script>
+            // document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
+            //     if (event.detail.status === 'failed') {
+            //         const error = document.querySelector("#error");
+            //         error.classList.remove('hide');
+            //         error.addEventListener('transitionend', (event) => {
+            //             error.classList.add('hide');
+            //         });
+            //     }
+            // });
+
+
+
+        </script>
+
+        <script type="module">
+            const modelViewer2 = document.querySelector("#model-viewer");
+            // Сохраняем начальные значения камеры
+            const defaultCameraTarget = modelViewer2.cameraTarget;
+            const defaultCameraOrbit = modelViewer2.cameraOrbit;
+            const defaultFieldOfView = modelViewer2.fieldOfView;
+
+            // Переменные для отслеживания, какая кнопка была нажата
+            let lastClickedHotspot = null;
+
+
+            const annotationClicked = (annotation) => {
+                let dataset = annotation.dataset;
+
+                if (lastClickedHotspot === annotation) {
+                    // Если нажата та же самая кнопка, возвращаем камеру в исходное состояние
+                    modelViewer2.cameraTarget = defaultCameraTarget;
+                    modelViewer2.cameraOrbit = defaultCameraOrbit;
+                    modelViewer2.fieldOfView = defaultFieldOfView;
+                } else {
+                    // Если нажата другая кнопка, приближаем камеру к новой цели
+                    modelViewer.cameraTarget = dataset.target;
+                    modelViewer.cameraOrbit = dataset.orbit;
+                }
+
+                // Обновляем информацию о последней нажатой кнопке
+                lastClickedHotspot = annotation;
+            };
+
+            modelViewer2.querySelectorAll('button').forEach((hotspot) => {
+                console.log(hotspot);
+                hotspot.addEventListener('click', () => annotationClicked(hotspot));
+            });
+        </script>
+
+        <style type="text/css">
+            .Hotspot {
+                background: rgba(255, 255, 255, 0.6);
+                /* Полупрозрачный белый фон */
+                border-radius: 4px;
+                border: none;
+                box-sizing: border-box;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+                color: rgba(0, 0, 0, 0.8);
+                display: block;
+                font-family: Futura, Helvetica Neue, sans-serif;
+                font-size: 8px;
+                font-weight: 700;
+                max-width: 165px;
+                overflow-wrap: break-word;
+                padding: 0.5em 1em;
+                position: absolute;
+                width: max-content;
+                height: max-content;
+                transform: translate3d(-50%, -50%, 0);
+            }
+        </style>
 
 </body>
 
